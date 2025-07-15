@@ -24,13 +24,15 @@ YELLOW = (255, 255, 0)
 CYAN = (0, 255, 255)
 GRAY = (128, 128, 128)
 
-# Display resolutions - from vintage CRT to modern 8K
+# Display resolutions by category
 RESOLUTIONS = {
+    # Classic resolutions
     '1': (640, 480),     # VGA
     '2': (800, 600),     # SVGA
     '3': (1024, 768),    # XGA
     '4': (1280, 1024),   # SXGA
     '5': (1600, 1200),   # UXGA
+    # Modern resolutions
     '6': (1920, 1080),   # Full HD / 1080p
     '7': (2560, 1440),   # 2K / QHD / 1440p
     '8': (3840, 2160),   # 4K / UHD
