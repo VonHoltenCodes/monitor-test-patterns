@@ -34,6 +34,7 @@ class PatternGeneratorApp {
         this.initSliderControl('patternSpacing', 'spacingValue');
         this.initSliderControl('lineWidth', 'lineWidthValue');
         this.initSliderControl('rotation', 'rotationValue');
+        this.initSliderControl('peakNits', 'peakNitsValue');
         
         // Preset buttons
         document.querySelectorAll('.preset-btn').forEach(btn => {
@@ -58,6 +59,10 @@ class PatternGeneratorApp {
         
         document.getElementById('savePreset').addEventListener('click', () => {
             this.exportManager.savePreset();
+        });
+        
+        document.getElementById('exportProfile').addEventListener('click', () => {
+            this.exportManager.exportColorProfile();
         });
         
         // Canvas settings
@@ -138,7 +143,7 @@ class PatternGeneratorApp {
     }
     
     getPatternOptions() {
-        return {
+        const options = {
             size: parseInt(document.getElementById('patternSize').value),
             spacing: parseInt(document.getElementById('patternSpacing').value),
             lineWidth: parseInt(document.getElementById('lineWidth').value),
@@ -147,6 +152,15 @@ class PatternGeneratorApp {
             bgColor: document.getElementById('bgColor').value,
             rotation: parseInt(document.getElementById('rotation').value)
         };
+        
+        // Add HDR options if HDR pattern is selected
+        if (this.currentPattern.startsWith('hdr-')) {
+            options.peakNits = parseInt(document.getElementById('peakNits').value);
+            options.colorSpace = document.getElementById('colorSpace').value;
+            options.hdrMode = document.getElementById('hdrMode').value;
+        }
+        
+        return options;
     }
     
     drawCurrentPattern() {
@@ -186,6 +200,18 @@ class PatternGeneratorApp {
             case 'custom':
                 this.patternGenerator.drawCustom(options);
                 break;
+            case 'hdr-gradient':
+                this.patternGenerator.drawHDRGradient(options);
+                break;
+            case 'hdr-color-volume':
+                this.patternGenerator.drawHDRColorVolume(options);
+                break;
+        }
+        
+        // Show/hide HDR controls
+        const hdrSection = document.getElementById('hdrSection');
+        if (hdrSection) {
+            hdrSection.style.display = this.currentPattern.startsWith('hdr-') ? 'block' : 'none';
         }
         
         // Update canvas info
@@ -220,6 +246,14 @@ class PatternGeneratorApp {
                 break;
             case 'smpte':
                 document.getElementById('patternType').value = 'colorBars';
+                break;
+            case 'hdr-gradient':
+                document.getElementById('patternType').value = 'hdr-gradient';
+                document.getElementById('peakNits').value = 1000;
+                break;
+            case 'hdr-color-volume':
+                document.getElementById('patternType').value = 'hdr-color-volume';
+                document.getElementById('peakNits').value = 1000;
                 break;
         }
         

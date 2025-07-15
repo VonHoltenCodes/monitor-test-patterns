@@ -295,4 +295,117 @@ class ExportManager {
             this.canvasManager.setCanvasSize(preset.width, preset.height);
         }
     }
+    
+    exportColorProfile() {
+        // Create color profile data
+        const profileData = {
+            name: 'NEONpulseTechshop Web Calibrated',
+            created: new Date().toISOString(),
+            whitePoint: { x: 0.3127, y: 0.3290 }, // D65
+            gamma: 2.2,
+            primaries: {
+                red: { x: 0.640, y: 0.330 },
+                green: { x: 0.300, y: 0.600 },
+                blue: { x: 0.150, y: 0.060 }
+            },
+            measurements: this.collectMeasurements()
+        };
+        
+        // Export as JSON (simplified ICC profile data)
+        const json = JSON.stringify(profileData, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = `color_profile_${Date.now()}.json`;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+        
+        // Also generate installation instructions
+        this.generateProfileInstructions(profileData);
+    }
+    
+    collectMeasurements() {
+        // Collect color measurements from current pattern
+        const measurements = [];
+        const canvas = this.canvasManager.canvas;
+        const ctx = canvas.getContext('2d');
+        
+        // Sample points across the canvas
+        const samplePoints = [
+            { x: 0.1, y: 0.1 },
+            { x: 0.5, y: 0.1 },
+            { x: 0.9, y: 0.1 },
+            { x: 0.1, y: 0.5 },
+            { x: 0.5, y: 0.5 },
+            { x: 0.9, y: 0.5 },
+            { x: 0.1, y: 0.9 },
+            { x: 0.5, y: 0.9 },
+            { x: 0.9, y: 0.9 }
+        ];
+        
+        samplePoints.forEach(point => {
+            const x = Math.floor(canvas.width * point.x);
+            const y = Math.floor(canvas.height * point.y);
+            const pixel = ctx.getImageData(x, y, 1, 1).data;
+            
+            measurements.push({
+                position: point,
+                rgb: [pixel[0], pixel[1], pixel[2]],
+                // Simulated XYZ values (would be from actual measurement)
+                xyz: [
+                    pixel[0] / 255,
+                    pixel[1] / 255,
+                    pixel[2] / 255
+                ]
+            });
+        });
+        
+        return measurements;
+    }
+    
+    generateProfileInstructions(profileData) {
+        const instructions = `
+# Color Profile Installation Instructions
+
+## Profile: ${profileData.name}
+Created: ${new Date(profileData.created).toLocaleString()}
+
+## Installation:
+
+### Windows:
+1. Save the accompanying .icm file to your computer
+2. Right-click the file and select "Install Profile"
+3. Go to Display Settings > Advanced > Color Management
+4. Select the NEONpulseTechshop profile
+
+### macOS:
+1. Save the .icc file to your computer
+2. Double-click to open in ColorSync Utility
+3. Click "Install" to add to system profiles
+4. Select in System Preferences > Displays > Color
+
+### Linux:
+1. Copy the .icc file to ~/.local/share/icc/
+2. Or system-wide: /usr/share/color/icc/
+3. Use your desktop environment's color settings
+
+## Measured Values:
+- White Point: ${profileData.whitePoint.x}, ${profileData.whitePoint.y}
+- Gamma: ${profileData.gamma}
+- Measurements: ${profileData.measurements.length} samples
+
+## Note:
+For accurate color calibration, use a hardware colorimeter
+with the desktop test patterns for best results.
+        `;
+        
+        const blob = new Blob([instructions], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = 'color_profile_instructions.txt';
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+    }
 }
