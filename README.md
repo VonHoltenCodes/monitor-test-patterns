@@ -31,6 +31,16 @@ The **NEONpulseTechshop Monitor Test Pattern Suite** is a comprehensive collecti
 - 🚀 **Zero Dependencies** - HTML patterns run in any browser
 - 📦 **Standalone Executable** - Python suite compiles to portable .exe
 
+## 🌐 Web Pattern Generator
+
+Try our new interactive pattern generator:
+- **[Launch Pattern Generator →](web-generator/index.html)**
+- Create custom test patterns
+- Real-time preview with zoom/pan
+- Export as PNG or SVG
+- Share patterns via URL
+- Save custom presets
+
 ## 📸 Screenshots
 
 <div align="center">
@@ -164,13 +174,18 @@ monitor-test-patterns/
 │   ├── crt-master-test.html   # All-in-one test suite
 │   ├── rgb-convergence-test.html  # RGB-specific tests
 │   ├── crt-control-test.html  # Control adjustment patterns
-│   └── test-pattern-*.html    # Resolution-specific patterns
+│   ├── test-pattern-*.html    # Resolution-specific patterns
+│   └── 4k-8k-patterns/        # Ultra HD test patterns
 ├── python-patterns/            # Dynamic Python test suite
 │   ├── crt_test_suite.py      # Main application
 │   ├── requirements.txt       # Dependencies
 │   └── build_exe.py          # Windows executable builder
+├── web-generator/             # Interactive pattern generator
+│   ├── index.html            # Generator interface
+│   ├── css/                  # Styling
+│   └── js/                   # Pattern algorithms
 ├── screenshots/               # Pattern examples
-├── video/                    # Demo videos
+├── ROADMAP.md                # Development roadmap
 └── README.md                 # This file
 ```
 
@@ -271,14 +286,20 @@ For commercial calibration services or custom test pattern development:
 
 ## 🚀 Roadmap
 
+### Recent Updates
+- ✅ **4K/8K Support** - Added resolutions up to 7680×4320
+- ✅ **Web Pattern Generator** - Interactive pattern creation tool
+- ✅ **Enhanced Python Suite** - Categorized resolution selection
+- ✅ **Export Options** - PNG and SVG export capabilities
+
 ### Planned Features
-- [ ] 4K/8K resolution support
 - [ ] HDR test patterns
 - [ ] Mobile app version
-- [ ] Web-based pattern generator
 - [ ] Automated calibration sequences
 - [ ] Color profile export
 - [ ] Multi-monitor support
+
+See [ROADMAP.md](ROADMAP.md) for detailed development plans
 
 ### Under Consideration
 - VR/AR display patterns

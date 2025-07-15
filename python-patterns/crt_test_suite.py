@@ -24,13 +24,19 @@ YELLOW = (255, 255, 0)
 CYAN = (0, 255, 255)
 GRAY = (128, 128, 128)
 
-# Common CRT resolutions
+# Display resolutions by category
 RESOLUTIONS = {
-    '1': (640, 480),    # VGA
-    '2': (800, 600),    # SVGA
-    '3': (1024, 768),   # XGA
-    '4': (1280, 1024),  # SXGA
-    '5': (1600, 1200),  # UXGA
+    # Classic resolutions
+    '1': (640, 480),     # VGA
+    '2': (800, 600),     # SVGA
+    '3': (1024, 768),    # XGA
+    '4': (1280, 1024),   # SXGA
+    '5': (1600, 1200),   # UXGA
+    # Modern resolutions
+    '6': (1920, 1080),   # Full HD / 1080p
+    '7': (2560, 1440),   # 2K / QHD / 1440p
+    '8': (3840, 2160),   # 4K / UHD
+    '9': (7680, 4320),   # 8K / UHD-2
 }
 
 class CRTTestSuite:
@@ -681,14 +687,40 @@ def select_resolution():
         subtitle_rect = subtitle.get_rect(center=(320, 100))
         screen.blit(subtitle, subtitle_rect)
         
-        # Resolution options
+        # Resolution options with categories
         y = 150
-        for key, res in RESOLUTIONS.items():
+        
+        # Classic resolutions
+        classic_label = small_font.render("Classic Resolutions:", True, NEON_MAGENTA)
+        screen.blit(classic_label, (200, y))
+        y += 25
+        
+        for key in ['1', '2', '3', '4', '5']:
+            res = RESOLUTIONS[key]
             text = f"{key}. {res[0]}×{res[1]}"
             color = NEON_GREEN if res == (1024, 768) else WHITE
             option = small_font.render(text, True, color)
             screen.blit(option, (250, y))
-            y += 30
+            y += 25
+        
+        y += 10
+        
+        # Modern resolutions
+        modern_label = small_font.render("Modern Resolutions:", True, NEON_MAGENTA)
+        screen.blit(modern_label, (200, y))
+        y += 25
+        
+        for key in ['6', '7', '8', '9']:
+            res = RESOLUTIONS[key]
+            text = f"{key}. {res[0]}×{res[1]}"
+            suffix = ""
+            if res[0] == 1920: suffix = " (Full HD)"
+            elif res[0] == 2560: suffix = " (2K)"
+            elif res[0] == 3840: suffix = " (4K)"
+            elif res[0] == 7680: suffix = " (8K)"
+            option = small_font.render(text + suffix, True, WHITE)
+            screen.blit(option, (250, y))
+            y += 25
             
         # Instructions
         inst = small_font.render("Press number key or ESC to exit", True, WHITE)
@@ -701,7 +733,7 @@ def select_resolution():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
-                elif event.key >= pygame.K_1 and event.key <= pygame.K_5:
+                elif event.key >= pygame.K_1 and event.key <= pygame.K_9:
                     key = str(event.key - pygame.K_0)
                     if key in RESOLUTIONS:
                         selected = RESOLUTIONS[key]
