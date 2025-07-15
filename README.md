@@ -68,12 +68,12 @@ The **NEONpulseTechshop Monitor Test Pattern Suite** is a comprehensive collecti
 [View All Screenshots →](screenshots/)
 </div>
 
-## 🎬 Demo Video
+## 🎬 Demo
 
 <div align="center">
-  <img src="demo.gif" alt="Monitor Test Pattern Demo" width="80%">
+  <img src="showcase.gif" alt="Monitor Test Pattern Showcase" width="80%">
   
-  *Cycling through various test patterns in action*
+  *All 23 test patterns in action - from RGB convergence to geometry calibration*
 </div>
 
 ## 🛠️ Test Patterns Included
