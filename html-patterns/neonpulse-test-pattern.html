@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=5">
+    <title>NEONpulseTechshop CRT Test Pattern</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: black;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            cursor: none;
+        }
+        
+        .test-pattern {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            background: black;
+        }
+        
+        /* Color Bars */
+        .color-bars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 75%;
+            display: flex;
+        }
+        
+        .color-bar {
+            flex: 1;
+            height: 100%;
+        }
+        
+        .bar-white { background: #ffffff; }
+        .bar-yellow { background: #ffff00; }
+        .bar-cyan { background: #00ffff; }
+        .bar-green { background: #00ff00; }
+        .bar-magenta { background: #ff00ff; }
+        .bar-red { background: #ff0000; }
+        .bar-blue { background: #0000ff; }
+        
+        /* Grayscale Gradient */
+        .grayscale {
+            position: absolute;
+            bottom: 20%;
+            left: 0;
+            width: 100%;
+            height: 5%;
+            background: linear-gradient(to right, #000000, #ffffff);
+        }
+        
+        /* Logo Section */
+        .logo-section {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border: 3px solid #ff00ff;
+        }
+        
+        .logo-neon {
+            font-size: 48px;
+            font-weight: bold;
+            color: #ff00ff;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+        }
+        
+        .logo-neon span {
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41, 0 0 30px #00ff41;
+        }
+        
+        .logo-tech {
+            font-size: 28px;
+            color: #00ff41;
+            margin-top: -10px;
+            letter-spacing: 8px;
+            text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
+        }
+        
+        .website {
+            font-size: 14px;
+            color: #ffffff;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+        
+        /* PLUGE Pattern */
+        .pluge {
+            position: absolute;
+            bottom: 10%;
+            left: 0;
+            width: 100%;
+            height: 10%;
+            display: flex;
+            background: #101010;
+        }
+        
+        .pluge-bar {
+            flex: 1;
+            height: 100%;
+        }
+        
+        .pluge-1 { background: #000000; }
+        .pluge-2 { background: #050505; }
+        .pluge-3 { background: #0a0a0a; }
+        .pluge-4 { background: #101010; }
+        .pluge-5 { background: #151515; }
+        
+        /* Grid Overlay */
+        .grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .grid-line {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .grid-h {
+            width: 100%;
+            height: 1px;
+        }
+        
+        .grid-v {
+            width: 1px;
+            height: 100%;
+        }
+        
+        /* Focus Circles */
+        .focus-pattern {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        /* Resolution Info */
+        .resolution-info {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: #ffffff;
+            font-size: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border: 1px solid #333;
+        }
+        
+        /* Keyboard Shortcuts */
+        .shortcuts {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #ffffff;
+            font-size: 11px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border: 1px solid #333;
+            display: none;
+        }
+        
+        body:hover .shortcuts {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-pattern" id="testPattern">
+        <!-- Color Bars -->
+        <div class="color-bars">
+            <div class="color-bar bar-white"></div>
+            <div class="color-bar bar-yellow"></div>
+            <div class="color-bar bar-cyan"></div>
+            <div class="color-bar bar-green"></div>
+            <div class="color-bar bar-magenta"></div>
+            <div class="color-bar bar-red"></div>
+            <div class="color-bar bar-blue"></div>
+        </div>
+        
+        <!-- Grayscale Gradient -->
+        <div class="grayscale"></div>
+        
+        <!-- PLUGE Pattern -->
+        <div class="pluge">
+            <div class="pluge-bar pluge-1"></div>
+            <div class="pluge-bar pluge-2"></div>
+            <div class="pluge-bar pluge-3"></div>
+            <div class="pluge-bar pluge-4"></div>
+            <div class="pluge-bar pluge-5"></div>
+        </div>
+        
+        <!-- Logo -->
+        <div class="logo-section">
+            <div class="logo-neon">NEON<span>pulse</span></div>
+            <div class="logo-tech">TECHSHOP</div>
+            <div class="website">neonpulsetechshop.com</div>
+        </div>
+        
+        <!-- Grid Overlay -->
+        <div class="grid" id="grid"></div>
+        
+        <!-- Resolution Info -->
+        <div class="resolution-info" id="resInfo"></div>
+        
+        <!-- Keyboard Shortcuts -->
+        <div class="shortcuts">
+            <strong>Keyboard Shortcuts:</strong><br>
+            G - Toggle Grid<br>
+            F - Toggle Focus Pattern<br>
+            C - Cycle Color Patterns<br>
+            L - Toggle Logo<br>
+            ESC - Exit Fullscreen
+        </div>
+    </div>
+    
+    <script>
+        // Generate grid
+        function generateGrid() {
+            var grid = document.getElementById('grid');
+            var spacing = 50;
+            
+            // Horizontal lines
+            for (var y = spacing; y < window.innerHeight; y += spacing) {
+                var line = document.createElement('div');
+                line.className = 'grid-line grid-h';
+                line.style.top = y + 'px';
+                grid.appendChild(line);
+            }
+            
+            // Vertical lines
+            for (var x = spacing; x < window.innerWidth; x += spacing) {
+                var line = document.createElement('div');
+                line.className = 'grid-line grid-v';
+                line.style.left = x + 'px';
+                grid.appendChild(line);
+            }
+            
+            // Focus circles
+            var centerX = window.innerWidth / 2;
+            var centerY = window.innerHeight / 2;
+            var radii = [100, 200, 300, 400];
+            
+            radii.forEach(function(radius) {
+                var circle = document.createElement('div');
+                circle.className = 'focus-pattern';
+                circle.style.width = (radius * 2) + 'px';
+                circle.style.height = (radius * 2) + 'px';
+                circle.style.left = (centerX - radius) + 'px';
+                circle.style.top = (centerY - radius) + 'px';
+                grid.appendChild(circle);
+            });
+        }
+        
+        // Update resolution info
+        function updateResolution() {
+            var info = document.getElementById('resInfo');
+            info.innerHTML = window.innerWidth + ' x ' + window.innerHeight;
+        }
+        
+        // Toggle grid visibility
+        var gridVisible = true;
+        function toggleGrid() {
+            var grid = document.getElementById('grid');
+            gridVisible = !gridVisible;
+            grid.style.display = gridVisible ? 'block' : 'none';
+        }
+        
+        // Toggle logo visibility
+        var logoVisible = true;
+        function toggleLogo() {
+            var logo = document.querySelector('.logo-section');
+            logoVisible = !logoVisible;
+            logo.style.display = logoVisible ? 'block' : 'none';
+        }
+        
+        // Pattern modes
+        var patterns = ['default', 'purity-white', 'purity-red', 'purity-green', 'purity-blue', 'convergence'];
+        var currentPattern = 0;
+        
+        function cyclePattern() {
+            currentPattern = (currentPattern + 1) % patterns.length;
+            var pattern = patterns[currentPattern];
+            var testPattern = document.getElementById('testPattern');
+            
+            // Clear previous pattern classes
+            testPattern.className = 'test-pattern';
+            
+            switch(pattern) {
+                case 'purity-white':
+                    testPattern.style.background = '#ffffff';
+                    break;
+                case 'purity-red':
+                    testPattern.style.background = '#ff0000';
+                    break;
+                case 'purity-green':
+                    testPattern.style.background = '#00ff00';
+                    break;
+                case 'purity-blue':
+                    testPattern.style.background = '#0000ff';
+                    break;
+                case 'convergence':
+                    generateConvergencePattern();
+                    break;
+                default:
+                    testPattern.style.background = 'black';
+                    break;
+            }
+        }
+        
+        // Convergence pattern
+        function generateConvergencePattern() {
+            var testPattern = document.getElementById('testPattern');
+            testPattern.innerHTML = '';
+            testPattern.style.background = 'black';
+            
+            // Create crosshatch pattern
+            var canvas = document.createElement('canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            canvas.style.position = 'absolute';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            testPattern.appendChild(canvas);
+            
+            var ctx = canvas.getContext('2d');
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            
+            // Draw grid
+            for (var x = 0; x < canvas.width; x += 10) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            for (var y = 0; y < canvas.height; y += 10) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        }
+        
+        // Keyboard controls
+        document.addEventListener('keydown', function(e) {
+            switch(e.key.toLowerCase()) {
+                case 'g':
+                    toggleGrid();
+                    break;
+                case 'l':
+                    toggleLogo();
+                    break;
+                case 'c':
+                    cyclePattern();
+                    break;
+                case 'f11':
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen();
+                    } else {
+                        document.exitFullscreen();
+                    }
+                    break;
+                case 'escape':
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    }
+                    break;
+            }
+        });
+        
+        // Initialize
+        window.onload = function() {
+            generateGrid();
+            updateResolution();
+        };
+        
+        window.onresize = function() {
+            document.getElementById('grid').innerHTML = '';
+            generateGrid();
+            updateResolution();
+        };
+    </script>
+</body>
+</html>
