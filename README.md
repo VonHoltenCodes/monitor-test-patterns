@@ -267,7 +267,7 @@ For commercial calibration services or custom test pattern development:
 ### Community Support
 - 📝 [Report Issues](https://github.com/VonHoltenCodes/monitor-test-patterns/issues)
 - 💡 [Feature Requests](https://github.com/VonHoltenCodes/monitor-test-patterns/discussions)
-- 📧 Email: support@neonpulsetechshop.com
+- 📧 Email: trent@neonpulsetechshop.com
 
 ## 🚀 Roadmap
 
