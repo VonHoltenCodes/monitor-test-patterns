@@ -32,6 +32,8 @@ The **NEONpulseTechshop Monitor Test Pattern Suite** is a comprehensive collecti
 - 📦 **Standalone Executable** - Python suite compiles to portable .exe
 - 🔮 **4K/8K Support** - Ultra-high resolution patterns for modern displays
 - 📐 **Pixel-Perfect** - Sub-pixel rendering tests and 1:1 pixel mapping
+- 🌟 **HDR Support** - HDR10, HDR10+, and Dolby Vision test patterns
+- 🎨 **Wide Color Gamut** - Rec.2020 and DCI-P3 color space testing
 
 ## 🌐 Web Pattern Generator
 
@@ -124,6 +126,15 @@ Try our new interactive pattern generator:
 | **Backlight Uniformity** | Check for uneven lighting | LCD |
 | **Response Time Test** | Motion blur evaluation | LCD/OLED |
 
+### HDR Calibration (Next-Gen Displays)
+| Pattern | Purpose | Best For |
+|---------|---------|----------|
+| **Peak Brightness Windows** | Maximum brightness capability | HDR displays |
+| **10-bit Gradient Ramp** | Smooth tone reproduction | HDR10/DV |
+| **Color Volume Test** | Color at different brightness | HDR displays |
+| **PQ Curve Visualization** | Transfer function accuracy | All HDR |
+| **Tone Mapping Test** | SDR to HDR conversion | HDR displays |
+
 ## 🚀 Quick Start
 
 ### HTML Test Patterns (Universal)
@@ -148,8 +159,11 @@ cd monitor-test-patterns
 # Install dependencies
 pip install -r python-patterns/requirements.txt
 
-# Run the test suite
+# Run the standard test suite
 python python-patterns/crt_test_suite.py
+
+# Run HDR test suite (requires HDR display)
+python python-patterns/hdr_test_suite.py
 ```
 
 ## 📦 Installation
@@ -293,6 +307,7 @@ For commercial calibration services or custom test pattern development:
 ### Recent Updates
 - ✅ **4K/8K Support** - Added resolutions up to 7680×4320
 - ✅ **Web Pattern Generator** - Interactive pattern creation tool
+- ✅ **HDR Test Patterns** - Professional HDR calibration patterns
 - ✅ **Enhanced Python Suite** - Categorized resolution selection
 - ✅ **Export Options** - PNG and SVG export capabilities
 

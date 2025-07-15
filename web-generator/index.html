@@ -28,6 +28,8 @@
                     <option value="lines">Lines</option>
                     <option value="dots">Dot Matrix</option>
                     <option value="custom">Custom</option>
+                    <option value="hdr-gradient">HDR Gradient</option>
+                    <option value="hdr-color-volume">HDR Color Volume</option>
                 </select>
             </section>
             
@@ -86,6 +88,35 @@
                     <button class="preset-btn" data-preset="purity">Purity</button>
                     <button class="preset-btn" data-preset="smpte">SMPTE Bars</button>
                     <button class="preset-btn" data-preset="pluge">PLUGE</button>
+                    <button class="preset-btn" data-preset="hdr-gradient">HDR Test</button>
+                    <button class="preset-btn" data-preset="hdr-color-volume">HDR Colors</button>
+                </div>
+            </section>
+            
+            <!-- HDR Settings -->
+            <section class="control-section" id="hdrSection" style="display: none;">
+                <h3>HDR Settings</h3>
+                <div class="parameter-controls">
+                    <div class="slider-group">
+                        <label>Peak Brightness <span id="peakNitsValue">1000</span> nits</label>
+                        <input type="range" id="peakNits" min="100" max="10000" value="1000" step="100" class="slider">
+                    </div>
+                    <div class="slider-group">
+                        <label>Color Space</label>
+                        <select id="colorSpace" class="control-select">
+                            <option value="srgb">sRGB</option>
+                            <option value="p3">Display P3</option>
+                            <option value="rec2020">Rec.2020</option>
+                        </select>
+                    </div>
+                    <div class="color-input-group">
+                        <label>HDR Mode</label>
+                        <select id="hdrMode" class="control-select">
+                            <option value="hdr10">HDR10</option>
+                            <option value="hdr10plus">HDR10+</option>
+                            <option value="dolby">Dolby Vision</option>
+                        </select>
+                    </div>
                 </div>
             </section>
             

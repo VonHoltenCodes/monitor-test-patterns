@@ -30,9 +30,19 @@
 - [x] Touch device support
 - [x] Keyboard shortcuts
 
+### Phase 4: HDR Support
+- [x] HDR10 test patterns
+- [x] Peak brightness testing (100-10,000 nits)
+- [x] 10-bit gradient tests
+- [x] Color volume visualization
+- [x] PQ curve implementation
+- [x] Tone mapping tests
+- [x] Web generator HDR patterns
+- [x] Python HDR test suite
+
 ## 🚧 In Progress
 
-### Phase 4: Enhanced Pattern Generator
+### Phase 5: Enhanced Pattern Generator
 - [ ] Additional pattern types:
   - [ ] Moiré patterns
   - [ ] Spiral patterns
@@ -40,16 +50,16 @@
   - [ ] Motion blur tests
 - [ ] Pattern animation support
 - [ ] Real-time pattern morphing
-- [ ] Advanced color space support (sRGB, DCI-P3, Rec.2020)
+- [x] Advanced color space support (sRGB, DCI-P3, Rec.2020)
 
 ## 📋 Planned Features
 
-### Phase 5: HDR Support
-- [ ] HDR10 test patterns
-- [ ] Dolby Vision compatibility
-- [ ] Peak brightness tests
-- [ ] Color gamut visualization
-- [ ] Metadata embedding
+### Phase 6: Extended HDR Features
+- [ ] Dolby Vision metadata support
+- [ ] HDR10+ dynamic metadata
+- [ ] HLG (Hybrid Log-Gamma) patterns
+- [ ] HDR metadata embedding
+- [ ] Real-time HDR analysis
 
 ### Phase 6: Advanced Export Options
 - [ ] Color profile generation (ICC profiles)
