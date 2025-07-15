@@ -61,6 +61,10 @@ class PatternGeneratorApp {
             this.exportManager.savePreset();
         });
         
+        document.getElementById('exportProfile').addEventListener('click', () => {
+            this.exportManager.exportColorProfile();
+        });
+        
         // Canvas settings
         document.getElementById('canvasSize').addEventListener('change', (e) => {
             this.handleCanvasSizeChange(e.target.value);
