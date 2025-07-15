@@ -37,13 +37,20 @@ The **NEONpulseTechshop Monitor Test Pattern Suite** is a comprehensive collecti
 
 ## 🌐 Web Pattern Generator
 
-Try our new interactive pattern generator:
+<div align="center">
+  <img src="screenshots/web-generator.png" alt="Web Pattern Generator Interface" width="80%">
+  
+  *Interactive pattern generator with real-time preview and HDR support*
+</div>
+
+Try our interactive pattern generator:
 - **[Launch Pattern Generator →](web-generator/index.html)**
-- Create custom test patterns
-- Real-time preview with zoom/pan
-- Export as PNG or SVG
+- Create custom test patterns with real-time preview
+- HDR support (HDR10, HDR10+, Dolby Vision)
+- Export as PNG, SVG, or color profiles
 - Share patterns via URL
-- Save custom presets
+- Save and load custom presets
+- Multi-resolution support (VGA to 8K)
 
 ## 📸 Screenshots
 
@@ -75,6 +82,20 @@ Try our new interactive pattern generator:
     <td align="center" width="33%">
       <img src="screenshots/edge-calibration.png" alt="Edge Calibration" width="100%">
       <b>Edge Calibration</b>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="33%">
+      <img src="screenshots/4k-sub-pixel-mapping.png" alt="4K Sub-pixel" width="100%">
+      <b>4K Sub-pixel Precision</b>
+    </td>
+    <td align="center" width="33%">
+      <img src="screenshots/4k-text-sharpness.png" alt="4K Text Sharpness" width="100%">
+      <b>4K Text Sharpness</b>
+    </td>
+    <td align="center" width="33%">
+      <img src="screenshots/4k-wide-color-gamut.png" alt="4K Wide Gamut" width="100%">
+      <b>4K Wide Color Gamut</b>
     </td>
   </tr>
 </table>
@@ -181,6 +202,22 @@ python build_exe.py
 ### Option 3: Use HTML Files Directly
 No installation needed! Just open any HTML file in your browser.
 
+## 🌲 Branch Structure
+
+This repository uses feature branches for development:
+
+| Branch | Purpose | Status | Features |
+|--------|---------|--------|----------|
+| **`main`** | Stable release version | ✅ Active | Core HTML patterns, basic Python suite |
+| **`feature/4k-8k-resolution-support`** | Ultra-high resolution patterns | ✅ Complete | 4K/8K patterns, enhanced resolution support |
+| **`feature/web-pattern-generator`** | Interactive web-based generator | ✅ Complete | Real-time pattern creation, export tools |
+| **`feature/hdr-patterns`** | HDR and advanced calibration | 🚀 Latest | HDR patterns, multi-monitor, auto-calibration |
+
+### Branch-Specific Documentation
+- 📋 [4K/8K Support README](docs/4k-8k-branch-README.md) - Ultra-high resolution implementation
+- 🌐 [Web Generator README](docs/web-generator-branch-README.md) - Interactive pattern creation
+- 🌟 [HDR Patterns README](docs/hdr-patterns-branch-README.md) - HDR and advanced features
+
 ## 📖 Documentation
 
 ### File Structure
@@ -196,6 +233,10 @@ monitor-test-patterns/
 │   └── 4k-8k-patterns/        # Ultra HD test patterns
 ├── python-patterns/            # Dynamic Python test suite
 │   ├── crt_test_suite.py      # Main application
+│   ├── hdr_test_suite.py      # HDR calibration patterns
+│   ├── multi_monitor_suite.py # Multi-monitor testing
+│   ├── auto_calibration.py    # Automated calibration workflow
+│   ├── color_profile_export.py # ICC profile generation
 │   ├── requirements.txt       # Dependencies
 │   └── build_exe.py          # Windows executable builder
 ├── web-generator/             # Interactive pattern generator
@@ -305,18 +346,19 @@ For commercial calibration services or custom test pattern development:
 ## 🚀 Roadmap
 
 ### Recent Updates
+- ✅ **HDR Test Patterns** - Professional HDR calibration patterns (HDR10, HDR10+, Dolby Vision)
+- ✅ **Multi-Monitor Support** - Synchronized patterns across multiple displays
+- ✅ **Automated Calibration** - Step-by-step guided calibration sequences
+- ✅ **Color Profile Export** - ICC profile generation and calibration data export
 - ✅ **4K/8K Support** - Added resolutions up to 7680×4320
-- ✅ **Web Pattern Generator** - Interactive pattern creation tool
-- ✅ **HDR Test Patterns** - Professional HDR calibration patterns
+- ✅ **Web Pattern Generator** - Interactive pattern creation tool with HDR support
 - ✅ **Enhanced Python Suite** - Categorized resolution selection
-- ✅ **Export Options** - PNG and SVG export capabilities
 
 ### Planned Features
-- [ ] HDR test patterns
-- [ ] Mobile app version
-- [ ] Automated calibration sequences
-- [ ] Color profile export
-- [ ] Multi-monitor support
+- [ ] Mobile app version (on hold per user feedback)
+- [ ] VR/AR display patterns
+- [ ] AI-assisted calibration
+- [ ] Cloud sync for settings
 
 See [ROADMAP.md](ROADMAP.md) for detailed development plans
 
