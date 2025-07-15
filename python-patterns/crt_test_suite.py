@@ -666,66 +666,79 @@ class CRTTestSuite:
 
 def select_resolution():
     """Display resolution selection menu"""
-    screen = pygame.display.set_mode((640, 480))
+    screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("Select Resolution")
     font = pygame.font.Font(None, 36)
     small_font = pygame.font.Font(None, 24)
+    tiny_font = pygame.font.Font(None, 18)
     clock = pygame.time.Clock()
     
     running = True
     selected = None
     
+    # Resolution categories
+    categories = {
+        "Legacy CRT": ['1', '2', '3', '4', '5'],
+        "Modern Displays": ['6', '7', '8', '9']
+    }
+    
     while running and selected is None:
         screen.fill(BLACK)
         
         # Title
-        title = font.render("NEONpulseTechshop CRT Test Suite", True, NEON_MAGENTA)
-        title_rect = title.get_rect(center=(320, 50))
+        title = font.render("NEONpulseTechshop Monitor Test Suite", True, NEON_MAGENTA)
+        title_rect = title.get_rect(center=(400, 40))
         screen.blit(title, title_rect)
         
         subtitle = small_font.render("Select Resolution:", True, WHITE)
-        subtitle_rect = subtitle.get_rect(center=(320, 100))
+        subtitle_rect = subtitle.get_rect(center=(400, 80))
         screen.blit(subtitle, subtitle_rect)
         
-        # Resolution options with categories
-        y = 150
-        
-        # Classic resolutions
-        classic_label = small_font.render("Classic Resolutions:", True, NEON_MAGENTA)
-        screen.blit(classic_label, (200, y))
-        y += 25
-        
-        for key in ['1', '2', '3', '4', '5']:
-            res = RESOLUTIONS[key]
-            text = f"{key}. {res[0]}×{res[1]}"
-            color = NEON_GREEN if res == (1024, 768) else WHITE
-            option = small_font.render(text, True, color)
-            screen.blit(option, (250, y))
-            y += 25
-        
-        y += 10
-        
-        # Modern resolutions
-        modern_label = small_font.render("Modern Resolutions:", True, NEON_MAGENTA)
-        screen.blit(modern_label, (200, y))
-        y += 25
-        
-        for key in ['6', '7', '8', '9']:
-            res = RESOLUTIONS[key]
-            text = f"{key}. {res[0]}×{res[1]}"
-            suffix = ""
-            if res[0] == 1920: suffix = " (Full HD)"
-            elif res[0] == 2560: suffix = " (2K)"
-            elif res[0] == 3840: suffix = " (4K)"
-            elif res[0] == 7680: suffix = " (8K)"
-            option = small_font.render(text + suffix, True, WHITE)
-            screen.blit(option, (250, y))
-            y += 25
+        # Resolution options by category
+        y = 120
+        for category, keys in categories.items():
+            # Category header
+            cat_text = small_font.render(category, True, NEON_GREEN)
+            screen.blit(cat_text, (200, y))
+            y += 30
+            
+            # Resolution options in category
+            for key in keys:
+                res = RESOLUTIONS[key]
+                text = f"{key}. {res[0]}×{res[1]}"
+                
+                # Add labels for common names
+                if res == (1920, 1080):
+                    text += " (Full HD)"
+                elif res == (2560, 1440):
+                    text += " (2K/QHD)"
+                elif res == (3840, 2160):
+                    text += " (4K/UHD)"
+                elif res == (7680, 4320):
+                    text += " (8K)"
+                    
+                # Highlight common resolutions
+                if res in [(1024, 768), (1920, 1080), (3840, 2160)]:
+                    color = WHITE
+                    text += " ★"
+                else:
+                    color = (200, 200, 200)
+                    
+                option = small_font.render(text, True, color)
+                screen.blit(option, (250, y))
+                y += 25
+            
+            y += 15  # Space between categories
             
         # Instructions
-        inst = small_font.render("Press number key or ESC to exit", True, WHITE)
-        inst_rect = inst.get_rect(center=(320, 400))
+        inst = small_font.render("Press number key (1-9) or ESC to exit", True, WHITE)
+        inst_rect = inst.get_rect(center=(400, 500))
         screen.blit(inst, inst_rect)
+        
+        # Warning for high resolutions
+        warning = tiny_font.render("Note: 4K/8K may require significant system resources", True, YELLOW)
+        warning_rect = warning.get_rect(center=(400, 530))
+        screen.blit(warning, warning_rect)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

@@ -30,6 +30,8 @@ The **NEONpulseTechshop Monitor Test Pattern Suite** is a comprehensive collecti
 - 🎨 **NEONpulseTechshop Branding** - Signature pink (#ff00ff) and green (#00ff41) aesthetic
 - 🚀 **Zero Dependencies** - HTML patterns run in any browser
 - 📦 **Standalone Executable** - Python suite compiles to portable .exe
+- 🔮 **4K/8K Support** - Ultra-high resolution patterns for modern displays
+- 📐 **Pixel-Perfect** - Sub-pixel rendering tests and 1:1 pixel mapping
 
 ## 🌐 Web Pattern Generator
 
@@ -175,6 +177,8 @@ monitor-test-patterns/
 │   ├── rgb-convergence-test.html  # RGB-specific tests
 │   ├── crt-control-test.html  # Control adjustment patterns
 │   ├── test-pattern-*.html    # Resolution-specific patterns
+│   ├── test-pattern-4k.html   # 4K/UHD specific patterns
+│   ├── test-pattern-8k.html   # 8K ultra HD patterns
 │   └── 4k-8k-patterns/        # Ultra HD test patterns
 ├── python-patterns/            # Dynamic Python test suite
 │   ├── crt_test_suite.py      # Main application
