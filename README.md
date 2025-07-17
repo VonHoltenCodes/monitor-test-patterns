@@ -12,7 +12,7 @@
 [![Python](https://img.shields.io/badge/Python-3.6+-blue.svg)](https://www.python.org/)
 [![Windows](https://img.shields.io/badge/Windows-XP%2B-green.svg)](https://www.microsoft.com/windows)
 
-[**Live Demo**](#) | [**Download**](#installation) | [**Documentation**](#documentation) | [**Support**](#support)
+[**Live Demo**](https://vonholtencodes.com/crt-test-patterns/) | [**Download**](#installation) | [**Documentation**](#documentation) | [**Support**](#support)
 
 </div>
 
@@ -44,7 +44,7 @@ The **NEONpulseTechshop Monitor Test Pattern Suite** is a comprehensive collecti
 </div>
 
 Try our interactive pattern generator:
-- **[Launch Pattern Generator →](web-generator/index.html)**
+- **[Launch Pattern Generator →](https://vonholtencodes.com/crt-test-patterns/)**
 - Create custom test patterns with real-time preview
 - HDR support (HDR10, HDR10+, Dolby Vision)
 - Export as PNG, SVG, or color profiles
