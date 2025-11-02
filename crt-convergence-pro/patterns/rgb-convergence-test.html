@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=5">
+    <title>RGB Convergence Test - NEONpulseTechshop</title>
+    <style>
+        * { margin: 0; padding: 0; }
+        body { 
+            background: black; 
+            overflow: hidden; 
+            cursor: none;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .test-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            display: none;
+        }
+        
+        .test-container.active {
+            display: block;
+        }
+        
+        /* Test 1: RGB Crosshatch */
+        .crosshatch {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .rgb-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .rgb-grid.red {
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 19px, red 19px, red 20px),
+                repeating-linear-gradient(90deg, transparent, transparent 19px, red 19px, red 20px);
+            transform: translate(-1px, -1px);
+        }
+        
+        .rgb-grid.green {
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 19px, #00ff00 19px, #00ff00 20px),
+                repeating-linear-gradient(90deg, transparent, transparent 19px, #00ff00 19px, #00ff00 20px);
+        }
+        
+        .rgb-grid.blue {
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 19px, blue 19px, blue 20px),
+                repeating-linear-gradient(90deg, transparent, transparent 19px, blue 19px, blue 20px);
+            transform: translate(1px, 1px);
+        }
+        
+        /* Test 2: Dot Matrix */
+        .dot-matrix {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .dot-row {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px 0;
+        }
+        
+        .rgb-dot {
+            width: 6px;
+            height: 6px;
+            position: relative;
+        }
+        
+        .rgb-dot::before,
+        .rgb-dot::after,
+        .rgb-dot span {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+        }
+        
+        .rgb-dot::before { background: red; top: 0; left: 0; }
+        .rgb-dot span { background: #00ff00; top: 0; left: 2px; position: absolute; }
+        .rgb-dot::after { background: blue; top: 0; left: 4px; }
+        
+        /* Test 3: Convergence Circles */
+        .convergence-circles {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .circle-group {
+            position: absolute;
+        }
+        
+        .rgb-circle {
+            position: absolute;
+            border-radius: 50%;
+            border-width: 1px;
+            border-style: solid;
+        }
+        
+        .rgb-circle.r { border-color: red; transform: translate(-1px, -1px); }
+        .rgb-circle.g { border-color: #00ff00; }
+        .rgb-circle.b { border-color: blue; transform: translate(1px, 1px); }
+        
+        /* Test 4: Fine Lines */
+        .fine-lines {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .line-group {
+            position: relative;
+            width: 80%;
+            height: 80%;
+        }
+        
+        .rgb-lines-h {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .rgb-lines-h.red {
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0,
+                transparent 5px,
+                red 5px,
+                red 6px
+            );
+            transform: translateY(-1px);
+        }
+        
+        .rgb-lines-h.green {
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0,
+                transparent 5px,
+                #00ff00 5px,
+                #00ff00 6px
+            );
+        }
+        
+        .rgb-lines-h.blue {
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0,
+                transparent 5px,
+                blue 5px,
+                blue 6px
+            );
+            transform: translateY(1px);
+        }
+        
+        /* Test 5: Corner Focus */
+        .corner-focus {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .corner-pattern {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+        }
+        
+        .corner-pattern.tl { top: 20px; left: 20px; }
+        .corner-pattern.tr { top: 20px; right: 20px; }
+        .corner-pattern.bl { bottom: 20px; left: 20px; }
+        .corner-pattern.br { bottom: 20px; right: 20px; }
+        .corner-pattern.center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        
+        .corner-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .corner-lines::before,
+        .corner-lines::after {
+            content: '';
+            position: absolute;
+            background: white;
+        }
+        
+        .corner-lines::before {
+            width: 100%;
+            height: 1px;
+            top: 50%;
+        }
+        
+        .corner-lines::after {
+            width: 1px;
+            height: 100%;
+            left: 50%;
+        }
+        
+        .corner-rgb {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .corner-rgb-dot {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+        }
+        
+        .corner-rgb-dot.r { background: red; top: -1px; left: -1px; }
+        .corner-rgb-dot.g { background: #00ff00; top: 0; left: 0; }
+        .corner-rgb-dot.b { background: blue; top: 1px; left: 1px; }
+        
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            color: white;
+            font-family: monospace;
+            font-size: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border: 1px solid #00ff41;
+            z-index: 1000;
+        }
+        
+        .logo {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            text-align: right;
+            font-family: Arial, sans-serif;
+            z-index: 1000;
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+        
+        .logo-text span {
+            color: #00ff41;
+            text-shadow: 0 0 5px #00ff41;
+        }
+        
+        .current-mode {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: #00ff41;
+            font-size: 18px;
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px 10px;
+            border: 1px solid #00ff41;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Test 1: RGB Crosshatch -->
+    <div class="test-container active" id="crosshatch">
+        <div class="crosshatch">
+            <div class="rgb-grid red"></div>
+            <div class="rgb-grid green"></div>
+            <div class="rgb-grid blue"></div>
+        </div>
+    </div>
+    
+    <!-- Test 2: Dot Matrix -->
+    <div class="test-container" id="dot-matrix">
+        <div class="dot-matrix" id="dotMatrix"></div>
+    </div>
+    
+    <!-- Test 3: Convergence Circles -->
+    <div class="test-container" id="circles">
+        <div class="convergence-circles">
+            <!-- Center -->
+            <div class="circle-group" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <div class="rgb-circle r" style="width: 100px; height: 100px; margin-left: -50px; margin-top: -50px;"></div>
+                <div class="rgb-circle g" style="width: 100px; height: 100px; margin-left: -50px; margin-top: -50px;"></div>
+                <div class="rgb-circle b" style="width: 100px; height: 100px; margin-left: -50px; margin-top: -50px;"></div>
+                
+                <div class="rgb-circle r" style="width: 200px; height: 200px; margin-left: -100px; margin-top: -100px;"></div>
+                <div class="rgb-circle g" style="width: 200px; height: 200px; margin-left: -100px; margin-top: -100px;"></div>
+                <div class="rgb-circle b" style="width: 200px; height: 200px; margin-left: -100px; margin-top: -100px;"></div>
+                
+                <div class="rgb-circle r" style="width: 300px; height: 300px; margin-left: -150px; margin-top: -150px;"></div>
+                <div class="rgb-circle g" style="width: 300px; height: 300px; margin-left: -150px; margin-top: -150px;"></div>
+                <div class="rgb-circle b" style="width: 300px; height: 300px; margin-left: -150px; margin-top: -150px;"></div>
+            </div>
+            
+            <!-- Corners -->
+            <div class="circle-group" style="top: 100px; left: 100px;">
+                <div class="rgb-circle r" style="width: 50px; height: 50px;"></div>
+                <div class="rgb-circle g" style="width: 50px; height: 50px;"></div>
+                <div class="rgb-circle b" style="width: 50px; height: 50px;"></div>
+            </div>
+            
+            <div class="circle-group" style="top: 100px; right: 100px;">
+                <div class="rgb-circle r" style="width: 50px; height: 50px;"></div>
+                <div class="rgb-circle g" style="width: 50px; height: 50px;"></div>
+                <div class="rgb-circle b" style="width: 50px; height: 50px;"></div>
+            </div>
+            
+            <div class="circle-group" style="bottom: 100px; left: 100px;">
+                <div class="rgb-circle r" style="width: 50px; height: 50px;"></div>
+                <div class="rgb-circle g" style="width: 50px; height: 50px;"></div>
+                <div class="rgb-circle b" style="width: 50px; height: 50px;"></div>
+            </div>
+            
+            <div class="circle-group" style="bottom: 100px; right: 100px;">
+                <div class="rgb-circle r" style="width: 50px; height: 50px;"></div>
+                <div class="rgb-circle g" style="width: 50px; height: 50px;"></div>
+                <div class="rgb-circle b" style="width: 50px; height: 50px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Test 4: Fine Lines -->
+    <div class="test-container" id="fine-lines">
+        <div class="fine-lines">
+            <div class="line-group">
+                <div class="rgb-lines-h red"></div>
+                <div class="rgb-lines-h green"></div>
+                <div class="rgb-lines-h blue"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Test 5: Corner Focus -->
+    <div class="test-container" id="corner-focus">
+        <div class="corner-focus">
+            <div class="corner-pattern tl">
+                <div class="corner-lines"></div>
+                <div class="corner-rgb">
+                    <div class="corner-rgb-dot r"></div>
+                    <div class="corner-rgb-dot g"></div>
+                    <div class="corner-rgb-dot b"></div>
+                </div>
+            </div>
+            
+            <div class="corner-pattern tr">
+                <div class="corner-lines"></div>
+                <div class="corner-rgb">
+                    <div class="corner-rgb-dot r"></div>
+                    <div class="corner-rgb-dot g"></div>
+                    <div class="corner-rgb-dot b"></div>
+                </div>
+            </div>
+            
+            <div class="corner-pattern bl">
+                <div class="corner-lines"></div>
+                <div class="corner-rgb">
+                    <div class="corner-rgb-dot r"></div>
+                    <div class="corner-rgb-dot g"></div>
+                    <div class="corner-rgb-dot b"></div>
+                </div>
+            </div>
+            
+            <div class="corner-pattern br">
+                <div class="corner-lines"></div>
+                <div class="corner-rgb">
+                    <div class="corner-rgb-dot r"></div>
+                    <div class="corner-rgb-dot g"></div>
+                    <div class="corner-rgb-dot b"></div>
+                </div>
+            </div>
+            
+            <div class="corner-pattern center">
+                <div class="corner-lines"></div>
+                <div class="corner-rgb">
+                    <div class="corner-rgb-dot r"></div>
+                    <div class="corner-rgb-dot g"></div>
+                    <div class="corner-rgb-dot b"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Logo -->
+    <div class="logo" id="logo">
+        <div class="logo-text">NEON<span>pulse</span></div>
+    </div>
+    
+    <!-- Current Mode -->
+    <div class="current-mode" id="currentMode">RGB Crosshatch</div>
+    
+    <!-- Controls -->
+    <div class="controls" id="controls">
+        <strong>RGB Convergence Tests</strong><br>
+        1 - RGB Crosshatch<br>
+        2 - Dot Matrix<br>
+        3 - Convergence Circles<br>
+        4 - Fine RGB Lines<br>
+        5 - Corner Focus<br>
+        R/G/B - Toggle Colors<br>
+        H - Hide Controls<br>
+        L - Toggle Logo
+    </div>
+    
+    <script>
+        const modes = ['RGB Crosshatch', 'Dot Matrix', 'Convergence Circles', 'Fine RGB Lines', 'Corner Focus'];
+        let currentMode = 0;
+        let showRed = true, showGreen = true, showBlue = true;
+        
+        // Generate dot matrix
+        function generateDotMatrix() {
+            const matrix = document.getElementById('dotMatrix');
+            matrix.innerHTML = '';
+            
+            const rows = Math.floor(window.innerHeight / 40);
+            const cols = Math.floor(window.innerWidth / 40);
+            
+            for (let r = 0; r < rows; r++) {
+                const row = document.createElement('div');
+                row.className = 'dot-row';
+                
+                for (let c = 0; c < cols; c++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'rgb-dot';
+                    dot.innerHTML = '<span></span>';
+                    row.appendChild(dot);
+                }
+                
+                matrix.appendChild(row);
+            }
+        }
+        
+        // Switch mode
+        function switchMode(index) {
+            document.querySelectorAll('.test-container').forEach(c => c.classList.remove('active'));
+            const containers = ['crosshatch', 'dot-matrix', 'circles', 'fine-lines', 'corner-focus'];
+            
+            if (index >= 0 && index < containers.length) {
+                document.getElementById(containers[index]).classList.add('active');
+                document.getElementById('currentMode').textContent = modes[index];
+                currentMode = index;
+                
+                if (index === 1) generateDotMatrix();
+            }
+        }
+        
+        // Toggle RGB channels
+        function updateRGBVisibility() {
+            const style = document.createElement('style');
+            style.id = 'rgb-toggle';
+            
+            let css = '';
+            if (!showRed) css += '.rgb-grid.red, .rgb-circle.r, .corner-rgb-dot.r, .rgb-lines-h.red, .rgb-dot::before { display: none !important; }\n';
+            if (!showGreen) css += '.rgb-grid.green, .rgb-circle.g, .corner-rgb-dot.g, .rgb-lines-h.green, .rgb-dot span { display: none !important; }\n';
+            if (!showBlue) css += '.rgb-grid.blue, .rgb-circle.b, .corner-rgb-dot.b, .rgb-lines-h.blue, .rgb-dot::after { display: none !important; }\n';
+            
+            style.textContent = css;
+            
+            const existing = document.getElementById('rgb-toggle');
+            if (existing) existing.remove();
+            
+            document.head.appendChild(style);
+        }
+        
+        // Keyboard controls
+        document.addEventListener('keydown', function(e) {
+            const key = e.key.toLowerCase();
+            
+            if (key >= '1' && key <= '5') {
+                switchMode(parseInt(key) - 1);
+            }
+            else if (key === 'r') {
+                showRed = !showRed;
+                updateRGBVisibility();
+            }
+            else if (key === 'g') {
+                showGreen = !showGreen;
+                updateRGBVisibility();
+            }
+            else if (key === 'b') {
+                showBlue = !showBlue;
+                updateRGBVisibility();
+            }
+            else if (key === 'h') {
+                const controls = document.getElementById('controls');
+                controls.style.display = controls.style.display === 'none' ? 'block' : 'none';
+            }
+            else if (key === 'l') {
+                const logo = document.getElementById('logo');
+                logo.style.display = logo.style.display === 'none' ? 'block' : 'none';
+            }
+            else if (e.key === 'ArrowRight') {
+                switchMode((currentMode + 1) % 5);
+            }
+            else if (e.key === 'ArrowLeft') {
+                switchMode((currentMode + 4) % 5);
+            }
+        });
+    </script>
+</body>
+</html>

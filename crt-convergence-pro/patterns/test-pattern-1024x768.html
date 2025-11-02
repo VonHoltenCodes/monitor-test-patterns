@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=5">
+    <title>1024x768 CRT Test - NEONpulseTechshop</title>
+    <style>
+        * { margin: 0; padding: 0; }
+        body { 
+            width: 1024px; 
+            height: 768px; 
+            overflow: hidden; 
+            background: black;
+            position: relative;
+        }
+        
+        /* Test pattern container */
+        .pattern-container {
+            width: 1024px;
+            height: 768px;
+            position: relative;
+        }
+        
+        /* Geometry grid */
+        .geometry-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 63px, rgba(255,255,255,0.2) 63px, rgba(255,255,255,0.2) 64px),
+                repeating-linear-gradient(90deg, transparent, transparent 63px, rgba(255,255,255,0.2) 63px, rgba(255,255,255,0.2) 64px);
+        }
+        
+        /* Center focus pattern */
+        .center-pattern {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+        }
+        
+        .focus-circle {
+            position: absolute;
+            border: 1px solid white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Convergence test corners */
+        .convergence-corner {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+        }
+        
+        .convergence-corner .rgb-line {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            top: 50%;
+        }
+        
+        .convergence-corner .rgb-line.red { background: #ff0000; transform: translateY(-1px); }
+        .convergence-corner .rgb-line.green { background: #00ff00; }
+        .convergence-corner .rgb-line.blue { background: #0000ff; transform: translateY(1px); }
+        
+        .convergence-corner .rgb-line-v {
+            position: absolute;
+            width: 1px;
+            height: 100%;
+            left: 50%;
+        }
+        
+        .convergence-corner .rgb-line-v.red { background: #ff0000; transform: translateX(-1px); }
+        .convergence-corner .rgb-line-v.green { background: #00ff00; }
+        .convergence-corner .rgb-line-v.blue { background: #0000ff; transform: translateX(1px); }
+        
+        .top-left { top: 20px; left: 20px; }
+        .top-right { top: 20px; right: 20px; }
+        .bottom-left { bottom: 20px; left: 20px; }
+        .bottom-right { bottom: 20px; right: 20px; }
+        
+        /* Color bars section */
+        .color-bars {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            display: flex;
+        }
+        
+        .color-bar {
+            flex: 1;
+            height: 100%;
+        }
+        
+        /* Logo overlay */
+        .logo-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border: 3px solid #ff00ff;
+            font-family: Arial, sans-serif;
+        }
+        
+        .logo-text {
+            font-size: 42px;
+            font-weight: bold;
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+        
+        .logo-text span {
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
+        }
+        
+        .logo-sub {
+            font-size: 24px;
+            color: #00ff41;
+            margin-top: -5px;
+            letter-spacing: 6px;
+        }
+        
+        .website {
+            font-size: 14px;
+            color: #ffffff;
+            margin-top: 15px;
+            opacity: 0.8;
+        }
+        
+        /* Resolution label */
+        .resolution-label {
+            position: absolute;
+            bottom: 160px;
+            right: 10px;
+            color: white;
+            font-size: 12px;
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px 10px;
+        }
+        
+        /* Sharpness test pattern */
+        .sharpness-test {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 50px;
+            background: repeating-linear-gradient(
+                90deg,
+                white 0px,
+                white 1px,
+                black 1px,
+                black 2px
+            );
+        }
+    </style>
+</head>
+<body>
+    <div class="pattern-container">
+        <!-- Geometry grid -->
+        <div class="geometry-grid"></div>
+        
+        <!-- Sharpness test -->
+        <div class="sharpness-test"></div>
+        
+        <!-- Center focus pattern -->
+        <div class="center-pattern">
+            <div class="focus-circle" style="width: 100px; height: 100px;"></div>
+            <div class="focus-circle" style="width: 200px; height: 200px;"></div>
+            <div class="focus-circle" style="width: 300px; height: 300px;"></div>
+            <div class="focus-circle" style="width: 400px; height: 400px;"></div>
+        </div>
+        
+        <!-- Convergence corners -->
+        <div class="convergence-corner top-left">
+            <div class="rgb-line red"></div>
+            <div class="rgb-line green"></div>
+            <div class="rgb-line blue"></div>
+            <div class="rgb-line-v red"></div>
+            <div class="rgb-line-v green"></div>
+            <div class="rgb-line-v blue"></div>
+        </div>
+        
+        <div class="convergence-corner top-right">
+            <div class="rgb-line red"></div>
+            <div class="rgb-line green"></div>
+            <div class="rgb-line blue"></div>
+            <div class="rgb-line-v red"></div>
+            <div class="rgb-line-v green"></div>
+            <div class="rgb-line-v blue"></div>
+        </div>
+        
+        <div class="convergence-corner bottom-left">
+            <div class="rgb-line red"></div>
+            <div class="rgb-line green"></div>
+            <div class="rgb-line blue"></div>
+            <div class="rgb-line-v red"></div>
+            <div class="rgb-line-v green"></div>
+            <div class="rgb-line-v blue"></div>
+        </div>
+        
+        <div class="convergence-corner bottom-right">
+            <div class="rgb-line red"></div>
+            <div class="rgb-line green"></div>
+            <div class="rgb-line blue"></div>
+            <div class="rgb-line-v red"></div>
+            <div class="rgb-line-v green"></div>
+            <div class="rgb-line-v blue"></div>
+        </div>
+        
+        <!-- Logo -->
+        <div class="logo-overlay" id="logo">
+            <div class="logo-text">NEON<span>pulse</span></div>
+            <div class="logo-sub">TECHSHOP</div>
+            <div class="website">neonpulsetechshop.com</div>
+        </div>
+        
+        <!-- Color bars -->
+        <div class="color-bars">
+            <div class="color-bar" style="background: #c0c0c0;"></div>
+            <div class="color-bar" style="background: #c0c000;"></div>
+            <div class="color-bar" style="background: #00c0c0;"></div>
+            <div class="color-bar" style="background: #00c000;"></div>
+            <div class="color-bar" style="background: #c000c0;"></div>
+            <div class="color-bar" style="background: #c00000;"></div>
+            <div class="color-bar" style="background: #0000c0;"></div>
+            <div class="color-bar" style="background: #000000;"></div>
+        </div>
+        
+        <!-- Resolution label -->
+        <div class="resolution-label">1024x768 XGA</div>
+    </div>
+    
+    <script>
+        // Toggle logo with L key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'l' || e.key === 'L') {
+                var logo = document.getElementById('logo');
+                logo.style.display = logo.style.display === 'none' ? 'block' : 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDR Test Patterns - NEONpulseTechshop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: black;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            cursor: none;
+        }
+        
+        #canvas {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+        
+        .info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: #ffffff;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            z-index: 1000;
+            transition: opacity 0.3s;
+        }
+        
+        .logo {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: bold;
+            opacity: 0.9;
+            z-index: 1000;
+            transition: opacity 0.3s;
+        }
+        
+        .logo span {
+            color: #ff00ff;
+        }
+        
+        .logo .pulse {
+            color: #00ff41;
+        }
+        
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .hdr-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: monospace;
+        }
+        
+        .hdr-info h3 {
+            color: #00ff41;
+            margin-bottom: 10px;
+        }
+        
+        .hdr-info .warning {
+            color: #ff00ff;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <div class="info" id="info">
+        <h3>HDR Test Pattern Suite</h3>
+        <p>Pattern: <span id="patternName">Peak Brightness</span></p>
+        <p>Mode: <span id="hdrMode">HDR10</span></p>
+        <p>Peak Nits: <span id="peakNits">1000</span></p>
+        <p>Bit Depth: <span id="bitDepth">10-bit</span></p>
+        <br>
+        <p><strong>Controls:</strong></p>
+        <p>1-9: Select Pattern</p>
+        <p>←→: Adjust Peak Brightness</p>
+        <p>↑↓: Adjust Window Size</p>
+        <p>M: Switch HDR Mode</p>
+        <p>I: Toggle Info</p>
+        <p>L: Toggle Logo</p>
+        <p>F11: Fullscreen</p>
+        <p>ESC: Exit</p>
+    </div>
+    
+    <div class="hdr-info" id="hdrInfo">
+        <h3>⚠️ HDR Display Required</h3>
+        <p>These patterns require:</p>
+        <p>• HDR10/Dolby Vision display</p>
+        <p>• HDR enabled in OS</p>
+        <p>• Browser HDR support</p>
+        <p class="warning">May appear incorrect on SDR displays</p>
+    </div>
+    
+    <div class="logo" id="logo">
+        <span>NEON</span><span class="pulse">pulse</span>
+    </div>
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d', {
+            colorSpace: 'rec2020',
+            pixelFormat: 'float16'
+        });
+        
+        let currentPattern = 0;
+        let showInfo = true;
+        let showLogo = true;
+        let peakNits = 1000;
+        let windowSize = 10; // Percentage
+        let hdrMode = 'HDR10';
+        let animationFrame = 0;
+        
+        // HDR color values (normalized 0-1, will be mapped to display capabilities)
+        const HDR_WHITE = { r: 1.0, g: 1.0, b: 1.0 };
+        const HDR_BLACK = { r: 0.0, g: 0.0, b: 0.0 };
+        const HDR_RED = { r: 1.0, g: 0.0, b: 0.0 };
+        const HDR_GREEN = { r: 0.0, g: 1.0, b: 0.0 };
+        const HDR_BLUE = { r: 0.0, g: 0.0, b: 1.0 };
+        
+        // Pattern definitions
+        const patterns = [
+            { name: 'Peak Brightness', func: drawPeakBrightness },
+            { name: 'Gradient Ramp', func: drawGradientRamp },
+            { name: 'Color Volume', func: drawColorVolume },
+            { name: 'Black Level', func: drawBlackLevel },
+            { name: 'Highlight Detail', func: drawHighlightDetail },
+            { name: 'Color Gamut', func: drawColorGamut },
+            { name: 'Tone Mapping', func: drawToneMapping },
+            { name: 'Clipping Test', func: drawClippingTest },
+            { name: 'PQ Curve Test', func: drawPQCurve }
+        ];
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drawPattern();
+        }
+        
+        function nitsToPQ(nits) {
+            // Convert nits to PQ (Perceptual Quantizer) value
+            const m1 = 0.1593017578125;
+            const m2 = 78.84375;
+            const c1 = 0.8359375;
+            const c2 = 18.8515625;
+            const c3 = 18.6875;
+            
+            const y = nits / 10000;
+            const pq = Math.pow((c1 + c2 * Math.pow(y, m1)) / (1 + c3 * Math.pow(y, m1)), m2);
+            return Math.min(1, Math.max(0, pq));
+        }
+        
+        function drawPeakBrightness() {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw different brightness windows
+            const windows = [
+                { percent: 1, nits: peakNits },
+                { percent: 2, nits: peakNits * 0.9 },
+                { percent: 5, nits: peakNits * 0.8 },
+                { percent: 10, nits: peakNits * 0.7 },
+                { percent: 25, nits: peakNits * 0.6 },
+                { percent: 50, nits: peakNits * 0.5 },
+                { percent: 100, nits: peakNits * 0.4 }
+            ];
+            
+            const spacing = canvas.width / (windows.length + 1);
+            
+            windows.forEach((window, index) => {
+                const x = spacing * (index + 1);
+                const size = (canvas.height * 0.6) * (window.percent / 100);
+                const brightness = nitsToPQ(window.nits);
+                
+                ctx.fillStyle = `rgb(${brightness * 255}, ${brightness * 255}, ${brightness * 255})`;
+                ctx.fillRect(x - size / 2, canvas.height / 2 - size / 2, size, size);
+                
+                // Label
+                ctx.fillStyle = 'white';
+                ctx.font = '14px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${window.percent}%`, x, canvas.height / 2 + size / 2 + 30);
+                ctx.fillText(`${Math.round(window.nits)} nits`, x, canvas.height / 2 + size / 2 + 50);
+            });
+        }
+        
+        function drawGradientRamp() {
+            // 10-bit gradient test
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+            
+            // Create smooth gradient with many stops for 10-bit precision
+            for (let i = 0; i <= 1024; i++) {
+                const value = i / 1024;
+                const brightness = nitsToPQ(value * peakNits);
+                gradient.addColorStop(value, `rgb(${brightness * 255}, ${brightness * 255}, ${brightness * 255})`);
+            }
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw step wedge at bottom for banding detection
+            const steps = 64;
+            const stepHeight = canvas.height * 0.2;
+            const stepWidth = canvas.width / steps;
+            
+            for (let i = 0; i < steps; i++) {
+                const value = i / (steps - 1);
+                const brightness = nitsToPQ(value * peakNits);
+                ctx.fillStyle = `rgb(${brightness * 255}, ${brightness * 255}, ${brightness * 255})`;
+                ctx.fillRect(i * stepWidth, canvas.height - stepHeight, stepWidth, stepHeight);
+            }
+        }
+        
+        function drawColorVolume() {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Rec.2020 color primaries at different brightness levels
+            const colors = [
+                { name: 'Red', color: HDR_RED },
+                { name: 'Green', color: HDR_GREEN },
+                { name: 'Blue', color: HDR_BLUE },
+                { name: 'Cyan', color: { r: 0, g: 1, b: 1 } },
+                { name: 'Magenta', color: { r: 1, g: 0, b: 1 } },
+                { name: 'Yellow', color: { r: 1, g: 1, b: 0 } }
+            ];
+            
+            const rows = 5;
+            const cols = colors.length;
+            const cellWidth = canvas.width / cols;
+            const cellHeight = canvas.height / rows;
+            
+            for (let row = 0; row < rows; row++) {
+                const brightness = (row + 1) / rows;
+                const nits = brightness * peakNits;
+                const pq = nitsToPQ(nits);
+                
+                for (let col = 0; col < cols; col++) {
+                    const color = colors[col].color;
+                    ctx.fillStyle = `rgb(${color.r * pq * 255}, ${color.g * pq * 255}, ${color.b * pq * 255})`;
+                    ctx.fillRect(col * cellWidth, row * cellHeight, cellWidth - 2, cellHeight - 2);
+                }
+                
+                // Row label
+                ctx.fillStyle = 'white';
+                ctx.font = '16px monospace';
+                ctx.textAlign = 'right';
+                ctx.fillText(`${Math.round(nits)} nits`, canvas.width - 10, row * cellHeight + cellHeight / 2);
+            }
+            
+            // Column labels
+            colors.forEach((color, index) => {
+                ctx.fillStyle = 'white';
+                ctx.font = '16px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(color.name, index * cellWidth + cellWidth / 2, canvas.height - 10);
+            });
+        }
+        
+        function drawBlackLevel() {
+            // Test pattern for HDR black levels and near-black detail
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw increasingly bright squares
+            const squares = 11;
+            const size = Math.min(canvas.width, canvas.height) * 0.8 / squares;
+            const startX = (canvas.width - size * squares) / 2;
+            const startY = (canvas.height - size) / 2;
+            
+            for (let i = 0; i < squares; i++) {
+                const nits = (i / (squares - 1)) * 50; // 0-50 nits range
+                const brightness = nitsToPQ(nits);
+                
+                ctx.fillStyle = `rgb(${brightness * 255}, ${brightness * 255}, ${brightness * 255})`;
+                ctx.fillRect(startX + i * size, startY, size - 1, size);
+                
+                // Label
+                ctx.fillStyle = brightness > 0.5 ? 'black' : 'white';
+                ctx.font = '12px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${Math.round(nits)}`, startX + i * size + size / 2, startY + size / 2);
+            }
+            
+            // PLUGE-style bars at bottom
+            const plugeHeight = canvas.height * 0.2;
+            const plugeNits = [0, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 2, 5];
+            const plugeWidth = canvas.width / plugeNits.length;
+            
+            plugeNits.forEach((nits, index) => {
+                const brightness = nitsToPQ(nits);
+                ctx.fillStyle = `rgb(${brightness * 255}, ${brightness * 255}, ${brightness * 255})`;
+                ctx.fillRect(index * plugeWidth, canvas.height - plugeHeight, plugeWidth - 1, plugeHeight);
+                
+                // Label
+                ctx.fillStyle = 'white';
+                ctx.font = '12px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${nits} nit`, index * plugeWidth + plugeWidth / 2, canvas.height - plugeHeight - 10);
+            });
+        }
+        
+        function drawHighlightDetail() {
+            // Pattern to test highlight roll-off and detail retention
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw concentric circles with decreasing brightness differences
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const maxRadius = Math.min(canvas.width, canvas.height) * 0.4;
+            const circles = 20;
+            
+            for (let i = 0; i < circles; i++) {
+                const radius = maxRadius * (1 - i / circles);
+                const baseNits = peakNits * 0.7;
+                const deltaNits = (peakNits * 0.3) * (i / circles);
+                const nits = baseNits + deltaNits;
+                const brightness = nitsToPQ(nits);
+                
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgb(${brightness * 255}, ${brightness * 255}, ${brightness * 255})`;
+                ctx.fill();
+            }
+            
+            // Draw fine detail pattern
+            const detailSize = 200;
+            const detailX = centerX - detailSize / 2;
+            const detailY = centerY - detailSize / 2;
+            
+            for (let y = 0; y < detailSize; y += 2) {
+                for (let x = 0; x < detailSize; x += 2) {
+                    const checker = (x + y) % 4 === 0;
+                    const nits = checker ? peakNits * 0.9 : peakNits * 0.95;
+                    const brightness = nitsToPQ(nits);
+                    
+                    ctx.fillStyle = `rgb(${brightness * 255}, ${brightness * 255}, ${brightness * 255})`;
+                    ctx.fillRect(detailX + x, detailY + y, 2, 2);
+                }
+            }
+        }
+        
+        function drawColorGamut() {
+            // Test Rec.2020 color space boundaries
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const size = Math.min(canvas.width, canvas.height) * 0.8;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            // Draw color wheel with Rec.2020 primaries
+            for (let angle = 0; angle < 360; angle += 1) {
+                const rad = (angle * Math.PI) / 180;
+                
+                for (let r = 0; r < size / 2; r++) {
+                    const saturation = r / (size / 2);
+                    const brightness = nitsToPQ(peakNits * 0.5);
+                    
+                    // Convert HSL to RGB (simplified for demonstration)
+                    const hue = angle;
+                    const rgb = hslToRgb(hue, saturation, brightness);
+                    
+                    const x = centerX + r * Math.cos(rad);
+                    const y = centerY + r * Math.sin(rad);
+                    
+                    ctx.fillStyle = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+                    ctx.fillRect(x, y, 2, 2);
+                }
+            }
+            
+            // Mark Rec.709 and Rec.2020 boundaries
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, size * 0.35, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            ctx.font = '14px monospace';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.fillText('Rec.709', centerX, centerY + size * 0.35 + 20);
+            ctx.fillText('Rec.2020', centerX, centerY + size / 2 + 20);
+        }
+        
+        function drawToneMapping() {
+            // Test tone mapping from SDR to HDR
+            const sections = 4;
+            const sectionWidth = canvas.width / sections;
+            
+            // SDR reference (100 nits)
+            const sdrGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            for (let i = 0; i <= 100; i++) {
+                const value = i / 100;
+                const nits = value * 100;
+                const brightness = nitsToPQ(nits);
+                sdrGradient.addColorStop(value, `rgb(${brightness * 255}, ${brightness * 255}, ${brightness * 255})`);
+            }
+            ctx.fillStyle = sdrGradient;
+            ctx.fillRect(0, 0, sectionWidth, canvas.height);
+            
+            // HDR mapped versions
+            const mappings = [400, 1000, 4000];
+            mappings.forEach((maxNits, index) => {
+                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                for (let i = 0; i <= 100; i++) {
+                    const value = i / 100;
+                    const nits = value * maxNits;
+                    const brightness = nitsToPQ(nits);
+                    gradient.addColorStop(value, `rgb(${brightness * 255}, ${brightness * 255}, ${brightness * 255})`);
+                }
+                ctx.fillStyle = gradient;
+                ctx.fillRect((index + 1) * sectionWidth, 0, sectionWidth, canvas.height);
+            });
+            
+            // Labels
+            const labels = ['SDR (100 nits)', 'HDR (400 nits)', 'HDR (1000 nits)', 'HDR (4000 nits)'];
+            labels.forEach((label, index) => {
+                ctx.fillStyle = 'black';
+                ctx.fillRect(index * sectionWidth, 0, sectionWidth, 30);
+                ctx.fillStyle = 'white';
+                ctx.font = '14px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(label, index * sectionWidth + sectionWidth / 2, 20);
+            });
+        }
+        
+        function drawClippingTest() {
+            // Test for highlight and shadow clipping
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const barWidth = canvas.width / 20;
+            const barHeight = canvas.height * 0.7;
+            const startY = (canvas.height - barHeight) / 2;
+            
+            // Draw bars from 0 to peak nits
+            for (let i = 0; i < 20; i++) {
+                const nits = (i / 19) * peakNits;
+                const brightness = nitsToPQ(nits);
+                
+                // Main bar
+                ctx.fillStyle = `rgb(${brightness * 255}, ${brightness * 255}, ${brightness * 255})`;
+                ctx.fillRect(i * barWidth, startY, barWidth - 2, barHeight);
+                
+                // Clipping indicator pattern
+                const pattern = (i + animationFrame / 10) % 2;
+                if (nits > peakNits * 0.9) {
+                    ctx.fillStyle = pattern ? 'red' : `rgb(${brightness * 255}, ${brightness * 255}, ${brightness * 255})`;
+                    ctx.fillRect(i * barWidth, startY - 20, barWidth - 2, 15);
+                }
+                
+                // Label
+                ctx.fillStyle = brightness > 0.5 ? 'black' : 'white';
+                ctx.font = '10px monospace';
+                ctx.textAlign = 'center';
+                ctx.save();
+                ctx.translate(i * barWidth + barWidth / 2, startY + barHeight - 10);
+                ctx.rotate(-Math.PI / 2);
+                ctx.fillText(`${Math.round(nits)} nits`, 0, 0);
+                ctx.restore();
+            }
+        }
+        
+        function drawPQCurve() {
+            // Visualize the PQ (Perceptual Quantizer) curve
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw axes
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            const margin = 50;
+            const graphWidth = canvas.width - 2 * margin;
+            const graphHeight = canvas.height - 2 * margin;
+            
+            // X-axis (nits)
+            ctx.beginPath();
+            ctx.moveTo(margin, canvas.height - margin);
+            ctx.lineTo(canvas.width - margin, canvas.height - margin);
+            ctx.stroke();
+            
+            // Y-axis (PQ value)
+            ctx.beginPath();
+            ctx.moveTo(margin, margin);
+            ctx.lineTo(margin, canvas.height - margin);
+            ctx.stroke();
+            
+            // Draw PQ curve
+            ctx.strokeStyle = '#00ff41';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            for (let x = 0; x <= graphWidth; x++) {
+                const nits = (x / graphWidth) * 10000;
+                const pq = nitsToPQ(nits);
+                const y = graphHeight - (pq * graphHeight);
+                
+                if (x === 0) {
+                    ctx.moveTo(margin + x, margin + y);
+                } else {
+                    ctx.lineTo(margin + x, margin + y);
+                }
+            }
+            ctx.stroke();
+            
+            // Draw reference points
+            const references = [100, 400, 1000, 4000, 10000];
+            references.forEach(nits => {
+                const x = (nits / 10000) * graphWidth;
+                const pq = nitsToPQ(nits);
+                const y = graphHeight - (pq * graphHeight);
+                
+                // Vertical line
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(margin + x, margin);
+                ctx.lineTo(margin + x, canvas.height - margin);
+                ctx.stroke();
+                
+                // Point
+                ctx.fillStyle = '#ff00ff';
+                ctx.beginPath();
+                ctx.arc(margin + x, margin + y, 5, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Label
+                ctx.fillStyle = 'white';
+                ctx.font = '12px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${nits}`, margin + x, canvas.height - margin + 20);
+            });
+            
+            // Axis labels
+            ctx.fillStyle = 'white';
+            ctx.font = '14px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('Nits', canvas.width / 2, canvas.height - 10);
+            ctx.save();
+            ctx.translate(15, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('PQ Value', 0, 0);
+            ctx.restore();
+        }
+        
+        function hslToRgb(h, s, l) {
+            h = h / 360;
+            let r, g, b;
+            
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            
+            return {
+                r: Math.round(r * 255),
+                g: Math.round(g * 255),
+                b: Math.round(b * 255)
+            };
+        }
+        
+        function drawPattern() {
+            patterns[currentPattern].func();
+            animationFrame++;
+            
+            // Update info display
+            document.getElementById('patternName').textContent = patterns[currentPattern].name;
+            document.getElementById('peakNits').textContent = peakNits;
+            document.getElementById('hdrMode').textContent = hdrMode;
+        }
+        
+        function animate() {
+            drawPattern();
+            requestAnimationFrame(animate);
+        }
+        
+        // Event handlers
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    const patternIndex = parseInt(e.key) - 1;
+                    if (patternIndex < patterns.length) {
+                        currentPattern = patternIndex;
+                    }
+                    break;
+                case 'ArrowLeft':
+                    peakNits = Math.max(100, peakNits - 100);
+                    break;
+                case 'ArrowRight':
+                    peakNits = Math.min(10000, peakNits + 100);
+                    break;
+                case 'ArrowUp':
+                    windowSize = Math.min(100, windowSize + 5);
+                    break;
+                case 'ArrowDown':
+                    windowSize = Math.max(1, windowSize - 5);
+                    break;
+                case 'm':
+                case 'M':
+                    hdrMode = hdrMode === 'HDR10' ? 'Dolby Vision' : 'HDR10';
+                    break;
+                case 'i':
+                case 'I':
+                    showInfo = !showInfo;
+                    document.getElementById('info').classList.toggle('hidden', !showInfo);
+                    document.getElementById('hdrInfo').classList.toggle('hidden', !showInfo);
+                    break;
+                case 'l':
+                case 'L':
+                    showLogo = !showLogo;
+                    document.getElementById('logo').classList.toggle('hidden', !showLogo);
+                    break;
+                case 'F11':
+                    e.preventDefault();
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen();
+                    } else {
+                        document.exitFullscreen();
+                    }
+                    break;
+                case 'Escape':
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    }
+                    break;
+            }
+        });
+        
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Check for HDR support
+        if (window.matchMedia && window.matchMedia('(color-gamut: p3)').matches) {
+            console.log('Display supports P3 color gamut');
+        }
+        
+        if (window.matchMedia && window.matchMedia('(color-gamut: rec2020)').matches) {
+            console.log('Display supports Rec.2020 color gamut');
+        }
+        
+        // Initialize
+        resizeCanvas();
+        animate();
+        
+        // Hide HDR warning after 5 seconds
+        setTimeout(() => {
+            document.getElementById('hdrInfo').classList.add('hidden');
+        }, 5000);
+    </script>
+</body>
+</html>

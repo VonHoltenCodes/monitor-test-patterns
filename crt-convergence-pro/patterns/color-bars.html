@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <title>Color Bars - NEONpulseTechshop</title>
+    <style type="text/css">
+        body {
+            background: #000000;
+            overflow: hidden;
+            cursor: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        .active { display: block; }
+
+        table {
+            width: 100%;
+            height: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        td {
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        .info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #00ff41;
+            font-family: Arial;
+            font-size: 12px;
+            background: #000000;
+            padding: 8px;
+            border: 1px solid #00ff41;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pattern 1: SMPTE Color Bars 75% -->
+    <div id="p1" class="pattern active">
+        <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td style="background:#C0C0C0;"></td>
+                <td style="background:#C0C000;"></td>
+                <td style="background:#00C0C0;"></td>
+                <td style="background:#00C000;"></td>
+                <td style="background:#C000C0;"></td>
+                <td style="background:#C00000;"></td>
+                <td style="background:#0000C0;"></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Pattern 2: Full Color Bars 100% -->
+    <div id="p2" class="pattern">
+        <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td style="background:#FFFFFF;"></td>
+                <td style="background:#FFFF00;"></td>
+                <td style="background:#00FFFF;"></td>
+                <td style="background:#00FF00;"></td>
+                <td style="background:#FF00FF;"></td>
+                <td style="background:#FF0000;"></td>
+                <td style="background:#0000FF;"></td>
+                <td style="background:#000000;"></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Pattern 3: RGB Bars -->
+    <div id="p3" class="pattern">
+        <table cellpadding="0" cellspacing="0" border="0">
+            <tr style="height:33.33%;">
+                <td style="background:#FF0000;"></td>
+            </tr>
+            <tr style="height:33.33%;">
+                <td style="background:#00FF00;"></td>
+            </tr>
+            <tr style="height:33.33%;">
+                <td style="background:#0000FF;"></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Pattern 4: Grayscale Ramp -->
+    <div id="p4" class="pattern">
+        <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td style="background:#000000;"></td>
+                <td style="background:#1C1C1C;"></td>
+                <td style="background:#383838;"></td>
+                <td style="background:#555555;"></td>
+                <td style="background:#717171;"></td>
+                <td style="background:#8D8D8D;"></td>
+                <td style="background:#AAAAAA;"></td>
+                <td style="background:#C6C6C6;"></td>
+                <td style="background:#E2E2E2;"></td>
+                <td style="background:#FFFFFF;"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="info" class="info">
+        <b>Pattern: <span id="pname">SMPTE 75%</span></b><br>
+        1=SMPTE Bars (75%)<br>
+        2=Full Bars (100%)<br>
+        3=RGB Bars<br>
+        4=Grayscale Ramp<br>
+        Arrows=Navigate I=Info
+    </div>
+
+    <script type="text/javascript">
+        var current = 1;
+        var patterns = ['SMPTE 75%','Full 100%','RGB Bars','Grayscale'];
+
+        function showPattern(num) {
+            if (num < 1 || num > 4) return;
+
+            for (var i = 1; i <= 4; i++) {
+                document.getElementById('p' + i).className = 'pattern';
+            }
+
+            document.getElementById('p' + num).className = 'pattern active';
+            document.getElementById('pname').innerHTML = patterns[num-1];
+            current = num;
+        }
+
+        function toggleInfo() {
+            var info = document.getElementById('info');
+            info.style.display = (info.style.display == 'none') ? 'block' : 'none';
+        }
+
+        document.onkeydown = function(e) {
+            e = e || window.event;
+            var key = e.keyCode;
+
+            if (key >= 49 && key <= 52) {
+                showPattern(key - 48);
+            }
+            else if (key == 73 || key == 105) {
+                toggleInfo();
+            }
+            else if (key == 39) {
+                current++;
+                if (current > 4) current = 1;
+                showPattern(current);
+            }
+            else if (key == 37) {
+                current--;
+                if (current < 1) current = 4;
+                showPattern(current);
+            }
+        };
+    </script>
+</body>
+</html>

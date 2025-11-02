@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=5">
+    <title>CRT Control Adjustments - NEONpulseTechshop</title>
+    <style>
+        * { margin: 0; padding: 0; }
+        body { 
+            background: black; 
+            overflow: hidden; 
+            cursor: none;
+            width: 100vw;
+            height: 100vh;
+            font-family: monospace;
+        }
+        
+        .test-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            display: none;
+        }
+        
+        .test-container.active {
+            display: block;
+        }
+        
+        /* 1. Brightness/Contrast PLUGE */
+        .pluge-test {
+            width: 100%;
+            height: 100%;
+            background: #101010;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .pluge-bars {
+            display: flex;
+            margin: 20px 0;
+        }
+        
+        .pluge-bar {
+            width: 150px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            position: relative;
+        }
+        
+        .pluge-label {
+            position: absolute;
+            bottom: -25px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* 2. H-Size/V-Size Test */
+        .size-test {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .size-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 3px solid white;
+            margin: 10px;
+        }
+        
+        .size-markers {
+            position: absolute;
+            background: #00ff41;
+        }
+        
+        .size-h {
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .size-v {
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .percent-marker {
+            position: absolute;
+            width: 1px;
+            height: 10px;
+            background: white;
+        }
+        
+        /* 3. Linearity/Geometry */
+        .linearity-test {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .linearity-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .grid-line {
+            position: absolute;
+            background: white;
+            opacity: 0.5;
+        }
+        
+        .grid-line-h {
+            width: 100%;
+            height: 1px;
+        }
+        
+        .grid-line-v {
+            width: 1px;
+            height: 100%;
+        }
+        
+        .linearity-circle {
+            position: absolute;
+            border: 2px solid #00ff41;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* 4. Pincushion/Barrel */
+        .pincushion-test {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .pincushion-lines {
+            position: absolute;
+            stroke: white;
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        /* 5. Rotation Test */
+        .rotation-test {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .rotation-grid {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+        }
+        
+        .rotation-line {
+            position: absolute;
+            background: white;
+            width: 100%;
+            height: 1px;
+            top: 50%;
+        }
+        
+        .rotation-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff00ff;
+            background: black;
+        }
+        
+        /* 6. H/V Position */
+        .position-test {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #0a0a0a;
+        }
+        
+        .position-cross {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .position-line {
+            position: absolute;
+            background: #00ff41;
+        }
+        
+        .position-line-h {
+            width: 200px;
+            height: 3px;
+            left: -100px;
+            top: -1.5px;
+        }
+        
+        .position-line-v {
+            width: 3px;
+            height: 200px;
+            top: -100px;
+            left: -1.5px;
+        }
+        
+        .position-border {
+            position: absolute;
+            border: 2px solid white;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+        }
+        
+        /* 7. Focus/Sharpness */
+        .focus-test {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: black;
+        }
+        
+        .focus-pattern {
+            text-align: center;
+        }
+        
+        .focus-lines {
+            margin: 20px 0;
+            height: 100px;
+            width: 600px;
+            background: repeating-linear-gradient(
+                90deg,
+                white 0px,
+                white 1px,
+                black 1px,
+                black 2px
+            );
+        }
+        
+        .focus-text {
+            color: white;
+            margin: 10px 0;
+        }
+        
+        .focus-text.small { font-size: 8px; }
+        .focus-text.medium { font-size: 12px; }
+        .focus-text.large { font-size: 16px; }
+        
+        /* 8. Color Temperature */
+        .color-temp-test {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .color-temp-bars {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .temp-bar {
+            width: 200px;
+            height: 400px;
+            position: relative;
+        }
+        
+        .temp-bar-white { background: white; }
+        .temp-bar-gray { background: #808080; }
+        .temp-bar-gradient {
+            background: linear-gradient(
+                to bottom,
+                white 0%,
+                #f0f0f0 20%,
+                #c0c0c0 40%,
+                #808080 60%,
+                #404040 80%,
+                black 100%
+            );
+        }
+        
+        /* Controls and Info */
+        .info-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ff41;
+            padding: 15px;
+            color: white;
+            font-size: 12px;
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .info-panel h3 {
+            color: #00ff41;
+            margin-bottom: 10px;
+        }
+        
+        .info-panel p {
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+        
+        .current-test {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: #00ff41;
+            font-size: 18px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 10px 20px;
+            border: 1px solid #00ff41;
+            z-index: 1000;
+        }
+        
+        .logo {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            text-align: right;
+            font-family: Arial, sans-serif;
+            z-index: 1000;
+        }
+        
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+        
+        .logo-text span {
+            color: #00ff41;
+            text-shadow: 0 0 5px #00ff41;
+        }
+        
+        .controls-help {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            color: #666;
+            font-size: 11px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- 1. Brightness/Contrast PLUGE -->
+    <div class="test-container active" id="pluge">
+        <div class="pluge-test">
+            <h2 style="color: white; margin-bottom: 30px;">BRIGHTNESS & CONTRAST ADJUSTMENT</h2>
+            
+            <!-- Black level bars -->
+            <div style="color: #888; margin-bottom: 10px;">Adjust BRIGHTNESS until 7.5% bar barely visible</div>
+            <div class="pluge-bars">
+                <div class="pluge-bar" style="background: #000000;">
+                    <span class="pluge-label">0% Super Black</span>
+                </div>
+                <div class="pluge-bar" style="background: #0d0d0d;">
+                    <span class="pluge-label">5% Below Black</span>
+                </div>
+                <div class="pluge-bar" style="background: #131313;">
+                    <span class="pluge-label">7.5% Reference</span>
+                </div>
+                <div class="pluge-bar" style="background: #1a1a1a;">
+                    <span class="pluge-label">10% Above Black</span>
+                </div>
+                <div class="pluge-bar" style="background: #262626;">
+                    <span class="pluge-label">15% Gray</span>
+                </div>
+            </div>
+            
+            <!-- White level bars -->
+            <div style="color: #888; margin: 30px 0 10px;">Adjust CONTRAST until all bars distinguishable</div>
+            <div class="pluge-bars">
+                <div class="pluge-bar" style="background: #b3b3b3;">
+                    <span class="pluge-label">70%</span>
+                </div>
+                <div class="pluge-bar" style="background: #d9d9d9;">
+                    <span class="pluge-label">85%</span>
+                </div>
+                <div class="pluge-bar" style="background: #ebebeb;">
+                    <span class="pluge-label">92%</span>
+                </div>
+                <div class="pluge-bar" style="background: #f5f5f5;">
+                    <span class="pluge-label">96%</span>
+                </div>
+                <div class="pluge-bar" style="background: #ffffff;">
+                    <span class="pluge-label">100%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 2. H-Size/V-Size -->
+    <div class="test-container" id="size">
+        <div class="size-test">
+            <div class="size-border"></div>
+            <div class="size-markers size-h"></div>
+            <div class="size-markers size-v"></div>
+            
+            <!-- Percentage markers -->
+            <div class="percent-marker" style="left: 10%; top: 45%;"></div>
+            <div class="percent-marker" style="left: 25%; top: 45%;"></div>
+            <div class="percent-marker" style="left: 75%; top: 45%;"></div>
+            <div class="percent-marker" style="left: 90%; top: 45%;"></div>
+            
+            <div class="percent-marker" style="top: 10%; left: 48%; width: 10px; height: 1px;"></div>
+            <div class="percent-marker" style="top: 25%; left: 48%; width: 10px; height: 1px;"></div>
+            <div class="percent-marker" style="top: 75%; left: 48%; width: 10px; height: 1px;"></div>
+            <div class="percent-marker" style="top: 90%; left: 48%; width: 10px; height: 1px;"></div>
+        </div>
+    </div>
+    
+    <!-- 3. Linearity -->
+    <div class="test-container" id="linearity">
+        <div class="linearity-test">
+            <div class="linearity-grid" id="linearityGrid"></div>
+            <div class="linearity-circle" style="width: 300px; height: 300px;"></div>
+            <div class="linearity-circle" style="width: 500px; height: 500px;"></div>
+            <div class="linearity-circle" style="width: 80%; height: 80%;"></div>
+        </div>
+    </div>
+    
+    <!-- 4. Pincushion/Barrel -->
+    <div class="test-container" id="pincushion">
+        <div class="pincushion-test">
+            <svg width="100%" height="100%" style="position: absolute;">
+                <!-- Vertical lines -->
+                <line x1="10%" y1="0" x2="10%" y2="100%" class="pincushion-lines"/>
+                <line x1="30%" y1="0" x2="30%" y2="100%" class="pincushion-lines"/>
+                <line x1="50%" y1="0" x2="50%" y2="100%" class="pincushion-lines"/>
+                <line x1="70%" y1="0" x2="70%" y2="100%" class="pincushion-lines"/>
+                <line x1="90%" y1="0" x2="90%" y2="100%" class="pincushion-lines"/>
+                
+                <!-- Horizontal lines -->
+                <line x1="0" y1="10%" x2="100%" y2="10%" class="pincushion-lines"/>
+                <line x1="0" y1="30%" x2="100%" y2="30%" class="pincushion-lines"/>
+                <line x1="0" y1="50%" x2="100%" y2="50%" class="pincushion-lines"/>
+                <line x1="0" y1="70%" x2="100%" y2="70%" class="pincushion-lines"/>
+                <line x1="0" y1="90%" x2="100%" y2="90%" class="pincushion-lines"/>
+                
+                <!-- Border -->
+                <rect x="2%" y="2%" width="96%" height="96%" fill="none" stroke="#00ff41" stroke-width="3"/>
+            </svg>
+        </div>
+    </div>
+    
+    <!-- 5. Rotation -->
+    <div class="test-container" id="rotation">
+        <div class="rotation-test">
+            <div class="rotation-grid">
+                <!-- Horizontal reference lines -->
+                <div class="rotation-line"></div>
+                <div class="rotation-line" style="top: 25%;"></div>
+                <div class="rotation-line" style="top: 75%;"></div>
+                
+                <!-- Rotation markers -->
+                <div class="rotation-marker" style="top: -10px; left: -10px;"></div>
+                <div class="rotation-marker" style="top: -10px; right: -10px;"></div>
+                <div class="rotation-marker" style="bottom: -10px; left: -10px;"></div>
+                <div class="rotation-marker" style="bottom: -10px; right: -10px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 6. H/V Position -->
+    <div class="test-container" id="position">
+        <div class="position-test">
+            <div class="position-border"></div>
+            <div class="position-cross">
+                <div class="position-line position-line-h"></div>
+                <div class="position-line position-line-v"></div>
+            </div>
+            
+            <!-- Corner indicators -->
+            <div style="position: absolute; top: 0; left: 0; width: 100px; height: 100px; border-right: 2px solid #ff00ff; border-bottom: 2px solid #ff00ff;"></div>
+            <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; border-left: 2px solid #ff00ff; border-bottom: 2px solid #ff00ff;"></div>
+            <div style="position: absolute; bottom: 0; left: 0; width: 100px; height: 100px; border-right: 2px solid #ff00ff; border-top: 2px solid #ff00ff;"></div>
+            <div style="position: absolute; bottom: 0; right: 0; width: 100px; height: 100px; border-left: 2px solid #ff00ff; border-top: 2px solid #ff00ff;"></div>
+        </div>
+    </div>
+    
+    <!-- 7. Focus/Sharpness -->
+    <div class="test-container" id="focus">
+        <div class="focus-test">
+            <div class="focus-pattern">
+                <div class="focus-text large">FOCUS ADJUSTMENT TEST</div>
+                
+                <div class="focus-lines"></div>
+                
+                <div class="focus-text small">
+                    1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz
+                </div>
+                <div class="focus-text medium">
+                    The quick brown fox jumps over the lazy dog
+                </div>
+                <div class="focus-text large">
+                    H I J K L M N O P Q R
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <svg width="200" height="200">
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="white" stroke-width="1"/>
+                        <line x1="100" y1="20" x2="100" y2="180" stroke="white" stroke-width="1"/>
+                        <line x1="20" y1="100" x2="180" y2="100" stroke="white" stroke-width="1"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 8. Color Temperature -->
+    <div class="test-container" id="color-temp">
+        <div class="color-temp-test">
+            <div class="color-temp-bars">
+                <div class="temp-bar temp-bar-white"></div>
+                <div class="temp-bar temp-bar-gray"></div>
+                <div class="temp-bar temp-bar-gradient"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Info Panel -->
+    <div class="info-panel" id="infoPanel">
+        <h3 id="testTitle">BRIGHTNESS & CONTRAST</h3>
+        <p id="testDesc">Adjust brightness until the 7.5% bar is barely visible. Then adjust contrast until all white bars are distinguishable.</p>
+    </div>
+    
+    <!-- Current Test Display -->
+    <div class="current-test" id="currentTestName">Brightness/Contrast</div>
+    
+    <!-- Logo -->
+    <div class="logo" id="logo">
+        <div class="logo-text">NEON<span>pulse</span></div>
+    </div>
+    
+    <!-- Controls Help -->
+    <div class="controls-help">
+        Press 1-8 for tests | I for info | L for logo | Arrow keys to navigate
+    </div>
+    
+    <script>
+        const tests = [
+            {
+                id: 'pluge',
+                name: 'Brightness/Contrast',
+                title: 'BRIGHTNESS & CONTRAST',
+                desc: 'Adjust brightness until the 7.5% bar is barely visible. Then adjust contrast until all white bars are distinguishable.'
+            },
+            {
+                id: 'size',
+                name: 'H-Size/V-Size',
+                title: 'HORIZONTAL & VERTICAL SIZE',
+                desc: 'Adjust H-SIZE and V-SIZE controls until the border is visible and properly centered with equal margins.'
+            },
+            {
+                id: 'linearity',
+                name: 'Linearity',
+                title: 'LINEARITY ADJUSTMENT',
+                desc: 'Grid squares should be equal size across the entire screen. Circles should appear perfectly round.'
+            },
+            {
+                id: 'pincushion',
+                name: 'Pincushion/Barrel',
+                title: 'PINCUSHION & BARREL',
+                desc: 'All lines should be perfectly straight. Adjust pincushion/barrel controls to eliminate any bowing.'
+            },
+            {
+                id: 'rotation',
+                name: 'Rotation',
+                title: 'ROTATION ADJUSTMENT',
+                desc: 'Horizontal lines should be perfectly level. Adjust rotation/tilt control if needed.'
+            },
+            {
+                id: 'position',
+                name: 'H/V Position',
+                title: 'CENTERING ADJUSTMENT',
+                desc: 'Adjust H-POSITION and V-POSITION until the image is perfectly centered on screen.'
+            },
+            {
+                id: 'focus',
+                name: 'Focus/Sharpness',
+                title: 'FOCUS ADJUSTMENT',
+                desc: 'Adjust FOCUS control until all text and lines are sharp and clear across the entire screen.'
+            },
+            {
+                id: 'color-temp',
+                name: 'Color Temperature',
+                title: 'COLOR TEMPERATURE',
+                desc: 'White and gray bars should appear neutral. Adjust color temperature/RGB drives for proper white balance.'
+            }
+        ];
+        
+        let currentTest = 0;
+        
+        // Generate linearity grid
+        function generateLinearityGrid() {
+            const grid = document.getElementById('linearityGrid');
+            const spacing = 50;
+            
+            // Horizontal lines
+            for (let y = 0; y <= 100; y += 10) {
+                const line = document.createElement('div');
+                line.className = 'grid-line grid-line-h';
+                line.style.top = y + '%';
+                grid.appendChild(line);
+            }
+            
+            // Vertical lines
+            for (let x = 0; x <= 100; x += 10) {
+                const line = document.createElement('div');
+                line.className = 'grid-line grid-line-v';
+                line.style.left = x + '%';
+                grid.appendChild(line);
+            }
+        }
+        
+        // Switch test
+        function switchTest(index) {
+            document.querySelectorAll('.test-container').forEach(c => c.classList.remove('active'));
+            
+            if (index >= 0 && index < tests.length) {
+                document.getElementById(tests[index].id).classList.add('active');
+                document.getElementById('currentTestName').textContent = tests[index].name;
+                document.getElementById('testTitle').textContent = tests[index].title;
+                document.getElementById('testDesc').textContent = tests[index].desc;
+                currentTest = index;
+            }
+        }
+        
+        // Keyboard controls
+        document.addEventListener('keydown', function(e) {
+            const key = e.key.toLowerCase();
+            
+            if (key >= '1' && key <= '8') {
+                switchTest(parseInt(key) - 1);
+            }
+            else if (key === 'i') {
+                const info = document.getElementById('infoPanel');
+                info.style.display = info.style.display === 'none' ? 'block' : 'none';
+            }
+            else if (key === 'l') {
+                const logo = document.getElementById('logo');
+                logo.style.display = logo.style.display === 'none' ? 'block' : 'none';
+            }
+            else if (e.key === 'ArrowRight') {
+                switchTest((currentTest + 1) % tests.length);
+            }
+            else if (e.key === 'ArrowLeft') {
+                switchTest((currentTest - 1 + tests.length) % tests.length);
+            }
+        });
+        
+        // Initialize
+        generateLinearityGrid();
+    </script>
+</body>
+</html>

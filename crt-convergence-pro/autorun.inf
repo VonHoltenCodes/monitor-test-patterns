@@ -1,0 +1,6 @@
+[autorun]
+open=menu.html
+shellexecute=menu.html
+action=Open NEONpulseTechshop CRT Test Patterns
+icon=menu.html,0
+label=CRT Test Patterns

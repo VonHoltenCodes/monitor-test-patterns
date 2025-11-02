@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <title>Geometry Test - NEONpulseTechshop</title>
+    <style type="text/css">
+        body {
+            background: #000000;
+            overflow: hidden;
+            cursor: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        .active { display: block; }
+
+        .info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #00ff41;
+            font-family: Arial;
+            font-size: 12px;
+            background: #000000;
+            padding: 8px;
+            border: 1px solid #00ff41;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pattern 1: Nested Squares -->
+    <div id="p1" class="pattern active">
+        <div style="position:absolute;top:10%;left:10%;width:80%;height:80%;border:2px solid white;"></div>
+        <div style="position:absolute;top:20%;left:20%;width:60%;height:60%;border:2px solid white;"></div>
+        <div style="position:absolute;top:30%;left:30%;width:40%;height:40%;border:2px solid white;"></div>
+        <div style="position:absolute;top:40%;left:40%;width:20%;height:20%;border:2px solid white;"></div>
+        <div style="position:absolute;width:100%;height:1px;background:white;top:50%;"></div>
+        <div style="position:absolute;width:1px;height:100%;background:white;left:50%;"></div>
+    </div>
+
+    <!-- Pattern 2: Grid -->
+    <div id="p2" class="pattern"></div>
+
+    <!-- Pattern 3: Border -->
+    <div id="p3" class="pattern" style="border:3px solid white;">
+        <div style="position:absolute;top:0;left:0;width:50px;height:50px;border-right:3px solid #00ff00;border-bottom:3px solid #00ff00;"></div>
+        <div style="position:absolute;top:0;right:0;width:50px;height:50px;border-left:3px solid #00ff00;border-bottom:3px solid #00ff00;"></div>
+        <div style="position:absolute;bottom:0;left:0;width:50px;height:50px;border-right:3px solid #00ff00;border-top:3px solid #00ff00;"></div>
+        <div style="position:absolute;bottom:0;right:0;width:50px;height:50px;border-left:3px solid #00ff00;border-top:3px solid #00ff00;"></div>
+        <div style="position:absolute;width:100%;height:2px;background:white;top:50%;"></div>
+        <div style="position:absolute;width:2px;height:100%;background:white;left:50%;"></div>
+    </div>
+
+    <div id="info" class="info">
+        <b>Pattern: <span id="pname">Squares</span></b><br>
+        1=Nested Squares<br>
+        2=Grid<br>
+        3=Border + Corners<br>
+        Arrows=Navigate I=Info
+    </div>
+
+    <script type="text/javascript">
+        var current = 1;
+        var patterns = ['Squares','Grid','Border + Corners'];
+
+        function makeGrid() {
+            var container = document.getElementById('p2');
+            var w = screen.width || 1024;
+            var h = screen.height || 768;
+            var step = Math.floor(w / 8);
+
+            for (var x = 0; x <= w; x += step) {
+                var line = document.createElement('div');
+                line.style.position = 'absolute';
+                line.style.left = x + 'px';
+                line.style.top = '0';
+                line.style.width = '1px';
+                line.style.height = h + 'px';
+                line.style.background = 'white';
+                container.appendChild(line);
+            }
+
+            step = Math.floor(h / 6);
+            for (var y = 0; y <= h; y += step) {
+                var line = document.createElement('div');
+                line.style.position = 'absolute';
+                line.style.left = '0';
+                line.style.top = y + 'px';
+                line.style.width = w + 'px';
+                line.style.height = '1px';
+                line.style.background = 'white';
+                container.appendChild(line);
+            }
+        }
+
+        function showPattern(num) {
+            if (num < 1 || num > 3) return;
+
+            for (var i = 1; i <= 3; i++) {
+                document.getElementById('p' + i).className = 'pattern';
+            }
+
+            document.getElementById('p' + num).className = 'pattern active';
+            document.getElementById('pname').innerHTML = patterns[num-1];
+            current = num;
+        }
+
+        function toggleInfo() {
+            var info = document.getElementById('info');
+            info.style.display = (info.style.display == 'none') ? 'block' : 'none';
+        }
+
+        document.onkeydown = function(e) {
+            e = e || window.event;
+            var key = e.keyCode;
+
+            if (key >= 49 && key <= 51) {
+                showPattern(key - 48);
+            }
+            else if (key == 73 || key == 105) {
+                toggleInfo();
+            }
+            else if (key == 39) {
+                current++;
+                if (current > 3) current = 1;
+                showPattern(current);
+            }
+            else if (key == 37) {
+                current--;
+                if (current < 1) current = 3;
+                showPattern(current);
+            }
+        };
+
+        makeGrid();
+    </script>
+</body>
+</html>

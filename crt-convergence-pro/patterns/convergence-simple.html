@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <title>RGB Convergence - NEONpulseTechshop</title>
+    <style type="text/css">
+        body {
+            background: #000000;
+            overflow: hidden;
+            cursor: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        .active { display: block; }
+
+        .line {
+            position: absolute;
+        }
+
+        .info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #00ff41;
+            font-family: Arial;
+            font-size: 12px;
+            background: #000000;
+            padding: 8px;
+            border: 1px solid #00ff41;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <div id="p1" class="pattern active"></div>
+    <div id="p2" class="pattern active"></div>
+    <div id="p3" class="pattern" style="background:#FF0000;"></div>
+    <div id="p4" class="pattern" style="background:#00FF00;"></div>
+    <div id="p5" class="pattern" style="background:#0000FF;"></div>
+    <div id="p6" class="pattern" style="background:#FFFFFF;"></div>
+    <div id="p7" class="pattern" style="background:#000000;"></div>
+    <div id="p8" class="pattern">
+        <div style="position:absolute;width:100%;height:2px;background:white;top:50%;"></div>
+        <div style="position:absolute;width:2px;height:100%;background:white;left:50%;"></div>
+    </div>
+
+    <div id="info" class="info">
+        <b>Pattern: <span id="pname">RGB Grid</span></b><br>
+        1=RGB Grid 2=White Grid<br>
+        3=Red 4=Green 5=Blue<br>
+        6=White 7=Black 8=Cross<br>
+        I=Toggle Info
+    </div>
+
+    <script type="text/javascript">
+        var current = 1;
+        var patterns = ['RGB Grid','White Grid','Red','Green','Blue','White','Black','Cross'];
+
+        function makeGrid(containerId, colors) {
+            var container = document.getElementById(containerId);
+            var w = screen.width || 1024;
+            var h = screen.height || 768;
+            var spacing = 20;
+
+            // Vertical lines
+            for (var x = 0; x < w; x += spacing) {
+                for (var c = 0; c < colors.length; c++) {
+                    var line = document.createElement('div');
+                    line.className = 'line';
+                    line.style.left = (x + c) + 'px';
+                    line.style.top = '0';
+                    line.style.width = '1px';
+                    line.style.height = h + 'px';
+                    line.style.background = colors[c];
+                    container.appendChild(line);
+                }
+            }
+
+            // Horizontal lines
+            for (var y = 0; y < h; y += spacing) {
+                for (var c = 0; c < colors.length; c++) {
+                    var line = document.createElement('div');
+                    line.className = 'line';
+                    line.style.left = '0';
+                    line.style.top = (y + c) + 'px';
+                    line.style.width = w + 'px';
+                    line.style.height = '1px';
+                    line.style.background = colors[c];
+                    container.appendChild(line);
+                }
+            }
+        }
+
+        function showPattern(num) {
+            if (num < 1 || num > 8) return;
+
+            for (var i = 1; i <= 8; i++) {
+                document.getElementById('p' + i).className = 'pattern';
+            }
+
+            document.getElementById('p' + num).className = 'pattern active';
+            document.getElementById('pname').innerHTML = patterns[num-1];
+            current = num;
+        }
+
+        function toggleInfo() {
+            var info = document.getElementById('info');
+            info.style.display = (info.style.display == 'none') ? 'block' : 'none';
+        }
+
+        document.onkeydown = function(e) {
+            e = e || window.event;
+            var key = e.keyCode;
+
+            if (key >= 49 && key <= 56) {
+                showPattern(key - 48);
+            }
+            else if (key == 73 || key == 105) {
+                toggleInfo();
+            }
+            else if (key == 39) {
+                current++;
+                if (current > 8) current = 1;
+                showPattern(current);
+            }
+            else if (key == 37) {
+                current--;
+                if (current < 1) current = 8;
+                showPattern(current);
+            }
+        };
+
+        // Generate grids on load
+        makeGrid('p1', ['red', '#00ff00', 'blue']);
+        makeGrid('p2', ['white']);
+    </script>
+</body>
+</html>

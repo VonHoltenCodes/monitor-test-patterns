@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=5">
+    <title>CRT Master Test Suite - NEONpulseTechshop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: black;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            cursor: none;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .test-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            display: none;
+        }
+        
+        .test-container.active {
+            display: block;
+        }
+        
+        /* 1. Horizontal/Vertical Position Test */
+        .position-test {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .h-line {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: white;
+        }
+        
+        .v-line {
+            position: absolute;
+            width: 1px;
+            height: 100%;
+            background: white;
+        }
+        
+        .position-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00ff41;
+        }
+        
+        /* 2. Edge Calibration Test */
+        .edge-test {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            border: 2px solid white;
+        }
+        
+        .edge-marker {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+        }
+        
+        .edge-marker::before,
+        .edge-marker::after {
+            content: '';
+            position: absolute;
+            background: white;
+        }
+        
+        .edge-marker.tl::before { width: 50px; height: 2px; top: 0; left: 0; }
+        .edge-marker.tl::after { width: 2px; height: 50px; top: 0; left: 0; }
+        
+        .edge-marker.tr::before { width: 50px; height: 2px; top: 0; right: 0; }
+        .edge-marker.tr::after { width: 2px; height: 50px; top: 0; right: 0; }
+        
+        .edge-marker.bl::before { width: 50px; height: 2px; bottom: 0; left: 0; }
+        .edge-marker.bl::after { width: 2px; height: 50px; bottom: 0; left: 0; }
+        
+        .edge-marker.br::before { width: 50px; height: 2px; bottom: 0; right: 0; }
+        .edge-marker.br::after { width: 2px; height: 50px; bottom: 0; right: 0; }
+        
+        /* 3. RGB Separation Test */
+        .rgb-test {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .rgb-pattern {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .rgb-line-h {
+            width: 300px;
+            height: 3px;
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .rgb-line-h .r { position: absolute; width: 100%; height: 1px; background: red; top: 0; }
+        .rgb-line-h .g { position: absolute; width: 100%; height: 1px; background: #00ff00; top: 1px; }
+        .rgb-line-h .b { position: absolute; width: 100%; height: 1px; background: blue; top: 2px; }
+        
+        .rgb-line-v {
+            width: 3px;
+            height: 300px;
+            position: relative;
+            display: inline-block;
+            margin: 0 20px;
+        }
+        
+        .rgb-line-v .r { position: absolute; width: 1px; height: 100%; background: red; left: 0; }
+        .rgb-line-v .g { position: absolute; width: 1px; height: 100%; background: #00ff00; left: 1px; }
+        .rgb-line-v .b { position: absolute; width: 1px; height: 100%; background: blue; left: 2px; }
+        
+        /* 4. Color Bleed Test */
+        .bleed-test {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .bleed-pattern {
+            display: grid;
+            grid-template-columns: repeat(3, 150px);
+            grid-template-rows: repeat(3, 150px);
+            gap: 50px;
+        }
+        
+        .bleed-square {
+            width: 150px;
+            height: 150px;
+            position: relative;
+        }
+        
+        .bleed-square.red { background: red; }
+        .bleed-square.green { background: #00ff00; }
+        .bleed-square.blue { background: blue; }
+        .bleed-square.white { background: white; }
+        .bleed-square.black { background: black; border: 1px solid #333; }
+        
+        /* 5. Convergence Dots */
+        .convergence-dots {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .dot-grid {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: grid;
+            grid-template-columns: repeat(11, 70px);
+            grid-template-rows: repeat(9, 70px);
+        }
+        
+        .convergence-dot {
+            width: 10px;
+            height: 10px;
+            margin: auto;
+            position: relative;
+        }
+        
+        .convergence-dot::before,
+        .convergence-dot::after,
+        .convergence-dot span {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .convergence-dot::before { background: red; top: -1px; left: -1px; }
+        .convergence-dot span { background: #00ff00; top: 0; left: 0; position: absolute; }
+        .convergence-dot::after { background: blue; top: 1px; left: 1px; }
+        
+        /* 6. Fine Grid Pattern */
+        .fine-grid {
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 9px, rgba(255,255,255,0.5) 9px, rgba(255,255,255,0.5) 10px),
+                repeating-linear-gradient(90deg, transparent, transparent 9px, rgba(255,255,255,0.5) 9px, rgba(255,255,255,0.5) 10px);
+        }
+        
+        /* 7. Focus Sharpness Test */
+        .focus-test {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .focus-lines {
+            width: 600px;
+            height: 400px;
+            position: relative;
+        }
+        
+        .focus-h-lines {
+            position: absolute;
+            width: 100%;
+            height: 200px;
+            top: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                white 0px,
+                white 1px,
+                black 1px,
+                black 3px
+            );
+        }
+        
+        .focus-v-lines {
+            position: absolute;
+            width: 100%;
+            height: 200px;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                white 0px,
+                white 1px,
+                black 1px,
+                black 3px
+            );
+        }
+        
+        .focus-text {
+            margin-top: 20px;
+            color: white;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        
+        /* 8. Pincushion/Barrel Test */
+        .geometry-circles {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .geo-circle {
+            position: absolute;
+            border: 2px solid white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* 9. Brightness Uniformity */
+        .brightness-test {
+            width: 100%;
+            height: 100%;
+            background: #808080;
+            position: relative;
+        }
+        
+        .brightness-squares {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: #808080;
+            border: 1px solid #666;
+        }
+        
+        /* Logo overlay */
+        .logo-overlay {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            text-align: right;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border: 1px solid #ff00ff;
+            font-family: Arial, sans-serif;
+            z-index: 1000;
+        }
+        
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+        
+        .logo-text span {
+            color: #00ff41;
+            text-shadow: 0 0 5px #00ff41;
+        }
+        
+        .website {
+            font-size: 10px;
+            color: #ffffff;
+            margin-top: 5px;
+            opacity: 0.7;
+        }
+        
+        /* Info overlay */
+        .info-overlay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border: 1px solid #00ff41;
+            display: none;
+            z-index: 1000;
+            max-width: 400px;
+        }
+        
+        .info-overlay.show {
+            display: block;
+        }
+        
+        .info-overlay h3 {
+            color: #00ff41;
+            margin-bottom: 10px;
+        }
+        
+        .info-overlay ul {
+            list-style: none;
+            line-height: 1.8;
+        }
+        
+        .current-test {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: #00ff41;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px 10px;
+            border: 1px solid #00ff41;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Test Patterns -->
+    
+    <!-- 1. Position Test -->
+    <div class="test-container active" id="position-test">
+        <div class="position-test">
+            <!-- Horizontal lines -->
+            <div class="h-line" style="top: 10%;"></div>
+            <div class="h-line" style="top: 25%;"></div>
+            <div class="h-line" style="top: 50%; height: 3px; background: #00ff41;"></div>
+            <div class="h-line" style="top: 75%;"></div>
+            <div class="h-line" style="top: 90%;"></div>
+            
+            <!-- Vertical lines -->
+            <div class="v-line" style="left: 10%;"></div>
+            <div class="v-line" style="left: 25%;"></div>
+            <div class="v-line" style="left: 50%; width: 3px; background: #00ff41;"></div>
+            <div class="v-line" style="left: 75%;"></div>
+            <div class="v-line" style="left: 90%;"></div>
+            
+            <!-- Position markers -->
+            <div class="position-marker" style="top: 10px; left: 10px;"></div>
+            <div class="position-marker" style="top: 10px; right: 10px;"></div>
+            <div class="position-marker" style="bottom: 10px; left: 10px;"></div>
+            <div class="position-marker" style="bottom: 10px; right: 10px;"></div>
+        </div>
+    </div>
+    
+    <!-- 2. Edge Calibration -->
+    <div class="test-container" id="edge-test">
+        <div class="edge-test">
+            <div class="edge-marker tl" style="top: 0; left: 0;"></div>
+            <div class="edge-marker tr" style="top: 0; right: 0;"></div>
+            <div class="edge-marker bl" style="bottom: 0; left: 0;"></div>
+            <div class="edge-marker br" style="bottom: 0; right: 0;"></div>
+            
+            <!-- Center cross -->
+            <div class="h-line" style="top: 50%;"></div>
+            <div class="v-line" style="left: 50%;"></div>
+            
+            <!-- Size reference squares -->
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; border: 1px solid #666;"></div>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; height: 400px; border: 1px solid #444;"></div>
+        </div>
+    </div>
+    
+    <!-- 3. RGB Separation -->
+    <div class="test-container" id="rgb-test">
+        <div class="rgb-test">
+            <div class="rgb-pattern">
+                <!-- Horizontal RGB lines -->
+                <div class="rgb-line-h">
+                    <div class="r"></div>
+                    <div class="g"></div>
+                    <div class="b"></div>
+                </div>
+                <div class="rgb-line-h">
+                    <div class="r"></div>
+                    <div class="g"></div>
+                    <div class="b"></div>
+                </div>
+                <div class="rgb-line-h">
+                    <div class="r"></div>
+                    <div class="g"></div>
+                    <div class="b"></div>
+                </div>
+                
+                <!-- Vertical RGB lines -->
+                <div style="text-align: center; margin: 50px 0;">
+                    <div class="rgb-line-v">
+                        <div class="r"></div>
+                        <div class="g"></div>
+                        <div class="b"></div>
+                    </div>
+                    <div class="rgb-line-v">
+                        <div class="r"></div>
+                        <div class="g"></div>
+                        <div class="b"></div>
+                    </div>
+                    <div class="rgb-line-v">
+                        <div class="r"></div>
+                        <div class="g"></div>
+                        <div class="b"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Corner RGB tests -->
+            <div style="position: absolute; top: 50px; left: 50px;">
+                <div class="rgb-line-h" style="width: 100px;">
+                    <div class="r"></div>
+                    <div class="g"></div>
+                    <div class="b"></div>
+                </div>
+            </div>
+            <div style="position: absolute; top: 50px; right: 50px;">
+                <div class="rgb-line-h" style="width: 100px;">
+                    <div class="r"></div>
+                    <div class="g"></div>
+                    <div class="b"></div>
+                </div>
+            </div>
+            <div style="position: absolute; bottom: 50px; left: 50px;">
+                <div class="rgb-line-h" style="width: 100px;">
+                    <div class="r"></div>
+                    <div class="g"></div>
+                    <div class="b"></div>
+                </div>
+            </div>
+            <div style="position: absolute; bottom: 50px; right: 50px;">
+                <div class="rgb-line-h" style="width: 100px;">
+                    <div class="r"></div>
+                    <div class="g"></div>
+                    <div class="b"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 4. Color Bleed Test -->
+    <div class="test-container" id="bleed-test">
+        <div class="bleed-test">
+            <div class="bleed-pattern">
+                <div class="bleed-square red"></div>
+                <div class="bleed-square green"></div>
+                <div class="bleed-square blue"></div>
+                <div class="bleed-square white"></div>
+                <div class="bleed-square black"></div>
+                <div class="bleed-square white"></div>
+                <div class="bleed-square blue"></div>
+                <div class="bleed-square green"></div>
+                <div class="bleed-square red"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 5. Convergence Dots -->
+    <div class="test-container" id="convergence-dots">
+        <div class="convergence-dots">
+            <div class="dot-grid" id="dotGrid"></div>
+        </div>
+    </div>
+    
+    <!-- 6. Fine Grid -->
+    <div class="test-container" id="fine-grid">
+        <div class="fine-grid"></div>
+    </div>
+    
+    <!-- 7. Focus Test -->
+    <div class="test-container" id="focus-test">
+        <div class="focus-test">
+            <div class="focus-lines">
+                <div class="focus-h-lines"></div>
+                <div class="focus-v-lines"></div>
+            </div>
+            <div class="focus-text">
+                ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz<br>
+                1234567890 !@#$%^&*()_+-=[]{}|;':",./<>?<br>
+                The quick brown fox jumps over the lazy dog.
+            </div>
+        </div>
+    </div>
+    
+    <!-- 8. Geometry Circles -->
+    <div class="test-container" id="geometry-circles">
+        <div class="geometry-circles">
+            <div class="geo-circle" style="width: 200px; height: 200px;"></div>
+            <div class="geo-circle" style="width: 400px; height: 400px;"></div>
+            <div class="geo-circle" style="width: 600px; height: 600px;"></div>
+            <div class="geo-circle" style="width: 90%; height: 90%;"></div>
+            
+            <!-- Grid overlay -->
+            <div class="h-line" style="top: 25%;"></div>
+            <div class="h-line" style="top: 50%;"></div>
+            <div class="h-line" style="top: 75%;"></div>
+            <div class="v-line" style="left: 25%;"></div>
+            <div class="v-line" style="left: 50%;"></div>
+            <div class="v-line" style="left: 75%;"></div>
+        </div>
+    </div>
+    
+    <!-- 9. Brightness Uniformity -->
+    <div class="test-container" id="brightness-test">
+        <div class="brightness-test">
+            <div class="brightness-squares" style="top: 10px; left: 10px;"></div>
+            <div class="brightness-squares" style="top: 10px; right: 10px;"></div>
+            <div class="brightness-squares" style="bottom: 10px; left: 10px;"></div>
+            <div class="brightness-squares" style="bottom: 10px; right: 10px;"></div>
+            <div class="brightness-squares" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+        </div>
+    </div>
+    
+    <!-- Logo -->
+    <div class="logo-overlay" id="logo">
+        <div class="logo-text">NEON<span>pulse</span></div>
+        <div class="website">neonpulsetechshop.com</div>
+    </div>
+    
+    <!-- Current Test Display -->
+    <div class="current-test" id="currentTest">Position Test</div>
+    
+    <!-- Info Overlay -->
+    <div class="info-overlay" id="info">
+        <h3>CRT Test Controls</h3>
+        <ul>
+            <li><strong>1</strong> - H/V Position Test</li>
+            <li><strong>2</strong> - Edge Calibration</li>
+            <li><strong>3</strong> - RGB Separation</li>
+            <li><strong>4</strong> - Color Bleed Test</li>
+            <li><strong>5</strong> - Convergence Dots</li>
+            <li><strong>6</strong> - Fine Grid Pattern</li>
+            <li><strong>7</strong> - Focus/Sharpness</li>
+            <li><strong>8</strong> - Geometry Circles</li>
+            <li><strong>9</strong> - Brightness Uniformity</li>
+            <li><strong>0</strong> - All Off (Black)</li>
+            <li><strong>C</strong> - Color Bars</li>
+            <li><strong>W</strong> - White Screen</li>
+            <li><strong>R/G/B</strong> - Pure Colors</li>
+            <li><strong>L</strong> - Toggle Logo</li>
+            <li><strong>I</strong> - Toggle Info</li>
+            <li><strong>F11</strong> - Fullscreen</li>
+        </ul>
+    </div>
+    
+    <script>
+        // Test patterns array
+        const tests = [
+            { id: 'position-test', name: 'Position Test' },
+            { id: 'edge-test', name: 'Edge Calibration' },
+            { id: 'rgb-test', name: 'RGB Separation' },
+            { id: 'bleed-test', name: 'Color Bleed Test' },
+            { id: 'convergence-dots', name: 'Convergence Dots' },
+            { id: 'fine-grid', name: 'Fine Grid' },
+            { id: 'focus-test', name: 'Focus Test' },
+            { id: 'geometry-circles', name: 'Geometry Circles' },
+            { id: 'brightness-test', name: 'Brightness Uniformity' }
+        ];
+        
+        let currentTestIndex = 0;
+        
+        // Generate convergence dots
+        function generateDots() {
+            const grid = document.getElementById('dotGrid');
+            for (let i = 0; i < 99; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'convergence-dot';
+                dot.innerHTML = '<span></span>';
+                grid.appendChild(dot);
+            }
+        }
+        
+        // Switch test pattern
+        function switchTest(index) {
+            // Hide all tests
+            document.querySelectorAll('.test-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            
+            // Clear any dynamic content
+            const body = document.body;
+            body.style.background = 'black';
+            
+            // Show selected test
+            if (index >= 0 && index < tests.length) {
+                document.getElementById(tests[index].id).classList.add('active');
+                document.getElementById('currentTest').textContent = tests[index].name;
+                currentTestIndex = index;
+            }
+        }
+        
+        // Color screens
+        function showColorScreen(color) {
+            document.querySelectorAll('.test-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            document.body.style.background = color;
+            document.getElementById('currentTest').textContent = 'Color: ' + color;
+        }
+        
+        // Color bars
+        function showColorBars() {
+            document.querySelectorAll('.test-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            
+            const bars = document.createElement('div');
+            bars.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex;';
+            bars.innerHTML = `
+                <div style="flex: 1; background: #c0c0c0;"></div>
+                <div style="flex: 1; background: #c0c000;"></div>
+                <div style="flex: 1; background: #00c0c0;"></div>
+                <div style="flex: 1; background: #00c000;"></div>
+                <div style="flex: 1; background: #c000c0;"></div>
+                <div style="flex: 1; background: #c00000;"></div>
+                <div style="flex: 1; background: #0000c0;"></div>
+            `;
+            bars.id = 'colorBars';
+            
+            // Remove existing bars if any
+            const existing = document.getElementById('colorBars');
+            if (existing) existing.remove();
+            
+            document.body.appendChild(bars);
+            document.getElementById('currentTest').textContent = 'SMPTE Color Bars';
+        }
+        
+        // Keyboard controls
+        document.addEventListener('keydown', function(e) {
+            const key = e.key.toLowerCase();
+            
+            // Number keys for test patterns
+            if (key >= '1' && key <= '9') {
+                const index = parseInt(key) - 1;
+                switchTest(index);
+            } else if (key === '0') {
+                showColorScreen('black');
+            }
+            
+            // Color keys
+            else if (key === 'r') showColorScreen('red');
+            else if (key === 'g') showColorScreen('#00ff00');
+            else if (key === 'b') showColorScreen('blue');
+            else if (key === 'w') showColorScreen('white');
+            else if (key === 'c') showColorBars();
+            
+            // Controls
+            else if (key === 'l') {
+                const logo = document.getElementById('logo');
+                logo.style.display = logo.style.display === 'none' ? 'block' : 'none';
+            }
+            else if (key === 'i') {
+                const info = document.getElementById('info');
+                info.classList.toggle('show');
+            }
+            
+            // Navigation
+            else if (e.key === 'ArrowRight') {
+                currentTestIndex = (currentTestIndex + 1) % tests.length;
+                switchTest(currentTestIndex);
+            }
+            else if (e.key === 'ArrowLeft') {
+                currentTestIndex = (currentTestIndex - 1 + tests.length) % tests.length;
+                switchTest(currentTestIndex);
+            }
+            
+            // Fullscreen
+            else if (e.key === 'F11') {
+                e.preventDefault();
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+        });
+        
+        // Initialize
+        generateDots();
+        
+        // Show info for 3 seconds on load
+        window.onload = function() {
+            document.getElementById('info').classList.add('show');
+            setTimeout(function() {
+                document.getElementById('info').classList.remove('show');
+            }, 3000);
+        };
+    </script>
+</body>
+</html>
